@@ -1,0 +1,36 @@
+{% if identity_credentials.auth_host -%}
+{% if identity_credentials.api_version and identity_credentials.api_version == "3" %}
+{% set auth_ver = "v3" %}
+{% else %}
+{% set auth_ver = "v2.0" %}
+{% endif %}
+
+[keystone_authtoken]
+auth_version = {{auth_ver}}
+www_authenticate_uri = {{ identity_credentials.auth_protocol }}://{{ identity_credentials.auth_host }}:{{ identity_credentials.credentials_port }}/{{auth_ver}}
+auth_url = {{ identity_credentials.auth_protocol }}://{{ identity_credentials.auth_host }}:{{ identity_credentials.credentials_port }}
+auth_type = password
+
+{% if identity_credentials.credentials_project_domain_name -%}
+project_domain_name = {{ identity_credentials.credentials_project_domain_name }}
+user_domain_name = {{ identity_credentials.credentials_user_domain_name }}
+{% else %}
+project_domain_name = default
+user_domain_name = default
+{% endif -%}
+
+username = {{ identity_credentials.credentials_username }}
+password = {{ identity_credentials.credentials_password }}
+project_name = {{identity_credentials.credentials_project}}
+
+admin_user = {{ identity_credentials.credentials_username }}
+admin_password = {{ identity_credentials.credentials_password }}
+admin_tenant_name = {{identity_credentials.credentials_project}}
+
+{% if identity_credentials.signing_dir -%}
+signing_dir = {{ identity_credentials.signing_dir }}
+{% endif -%}
+{% if options.use_memcache == true -%}
+memcached_servers = {{ options.memcache_url }}
+{% endif -%}
+{% endif -%}

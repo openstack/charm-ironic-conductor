@@ -1,0 +1,10 @@
+includes:
+  - layer:openstack-principle
+  - interface:mysql-shared
+  - interface:rabbitmq
+  - interface:keystone-credentials
+repo: https://github.com/gabriel-samfira/charm-ironic-conductor
+options:
+  basic:
+    use_venv: true
+    include_system_packages: true

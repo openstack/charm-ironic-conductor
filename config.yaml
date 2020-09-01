@@ -1,0 +1,80 @@
+options:
+  openstack-origin:
+    default: distro
+    type: string
+    description: |
+      Repository from which to install. May be one of the following:
+      distro (default), ppa:somecustom/ppa, a deb url sources entry,
+      or a supported Ubuntu Cloud Archive e.g.
+      .
+      cloud:<series>-<openstack-release>
+      cloud:<series>-<openstack-release>/updates
+      cloud:<series>-<openstack-release>/staging
+      cloud:<series>-<openstack-release>/proposed
+      .
+      See https://wiki.ubuntu.com/OpenStack/CloudArchive for info on which
+      cloud archives are available and supported.
+  rabbit-user:
+    default: ironic
+    type: string
+    description: Username used to access rabbitmq queue
+  rabbit-vhost:
+    default: openstack
+    type: string
+    description: Rabbitmq vhost
+  database-user:
+    default: ironic
+    type: string
+    description: Username for Ironic database access
+  database:
+    default: ironic
+    type: string
+    description: Database name for Ironic
+  debug:
+    default: False
+    type: boolean
+    description: Enable debug logging
+  verbose:
+    default: False
+    type: boolean
+    description: Enable verbose logging
+  region:
+    default: RegionOne
+    type: string
+    description: OpenStack Region
+  use-ipxe:
+    default: false
+    type: boolean
+    description: |
+      Use iPXE instead of PXE. This option will install an aditional
+      HTTP server with a root in /httpboot.
+  ipxe-http-port:
+    default: "8080"
+    type: string
+    description: |
+      The port used for the HTTP server used to serve iPXE resources.
+  max-tftp-block-size:
+    default: 0
+    type: int
+    description: |
+      Force TFTP server maximum block size. Setting this option to anything
+      other than 0, will force the block size sent over TFTP to the value
+      specified here. Valid range is 512-65535. By default, clients will
+      negotiate the block size.
+
+      Use this option if you're running ironic in a network with lower
+      MTU. The value of this option should be 32 bits less than the MTU.
+      If your MTU is 1450, the value for this option should be 1418.
+  disable-secure-erase:
+    default: false
+    type: boolean
+    description: |
+      This will disable secure erase in Ironic, when releasing a node. An ATA
+      Secure Erase will be attempted. If it's not supported, the disks will be
+      shreaded by writting random data to them once, then overwriting that data
+      with zeros.
+
+      Enabling this option will preserve the data on disk after release (not
+      recommended for production).
+
+  

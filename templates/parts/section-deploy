@@ -1,0 +1,14 @@
+[deploy]
+{% if options.use_ipxe -%}
+# Ironic compute node's http root path. (string value)
+http_root=/httpboot
+
+# Ironic compute node's HTTP server URL (string value)
+http_url=http://{{ options.deployment_interface_ip }}:{{ options.ipxe_http_port}}
+{% endif -%}
+
+{% if options.disable_secure_erase %}
+enable_ata_secure_erase = false
+shred_random_overwrite_iterations = 0
+shred_final_overwrite_with_zeros = false
+{% endif %}

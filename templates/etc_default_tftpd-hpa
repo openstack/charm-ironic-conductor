@@ -1,0 +1,9 @@
+TFTP_USERNAME="root"
+TFTP_DIRECTORY="{{ options.tftpboot }}"
+TFTP_ADDRESS=":69"
+
+{% if options.max_tftp_block_size != 0 %}
+TFTP_OPTIONS="-4 -v -v -v -v -v --map-file {{options.tftpboot}}/map-file --blocksize {{ options.max_tftp_block_size }}"
+{% else %}
+TFTP_OPTIONS="-4 -v -v -v -v -v --map-file {{options.tftpboot}}/map-file"
+{% endif %}

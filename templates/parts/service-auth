@@ -1,0 +1,31 @@
+# Authentication type to load (string value)
+auth_type = password
+
+# Authentication URL (string value)
+auth_url = {{ identity_credentials.auth_protocol }}://{{ identity_credentials.auth_host }}:{{ identity_credentials.credentials_port }}
+
+# Username (string value)
+username = {{ identity_credentials.credentials_username }}
+
+# User's password (string value)
+password = {{ identity_credentials.credentials_password }}
+
+# Project name to scope to (string value)
+project_name = {{identity_credentials.credentials_project}}
+
+
+{% if identity_credentials.service_domain -%}
+project_domain_name = {{ identity_credentials.credentials_project_domain_name }}
+user_domain_name = {{ identity_credentials.credentials_user_domain_name }}
+{% else -%}
+project_domain_name = default
+user_domain_name = default
+{% endif -%}
+
+{% if options.ca_cert_path -%}
+# PEM encoded Certificate Authority to use when verifying
+# HTTPs connections. (string value)
+cafile = {{ options.ca_cert_path }}
+{% endif -%}
+
+region_name = {{ options.region }}

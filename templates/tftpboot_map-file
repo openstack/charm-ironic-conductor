@@ -1,0 +1,4 @@
+re ^({{options.tftpboot}}/) {{options.tftpboot}}/\2
+re ^{{options.tftpboot}}/ {{options.tftpboot}}/
+re ^(^/) {{options.tftpboot}}/\1
+re ^([^/]) {{options.tftpboot}}/\1

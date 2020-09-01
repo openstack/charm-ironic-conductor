@@ -1,0 +1,30 @@
+[pxe]
+# Ironic compute node's tftp root path. (string value)
+{% if not tftpboot -%}
+{% set tftpboot = "/tftpboot" -%}
+{% endif -%}
+tftp_root={{tftpboot}}
+
+# IP address of Ironic compute node's tftp server. (string
+# value)
+tftp_server = {{ options.deployment_interface_ip }}
+
+pxe_append_params = nofb nomodeset vga=normal console=tty0 console=ttyS0,115200n8
+
+{% if options.use_ipxe -%}
+# Enable iPXE boot. (boolean value)
+ipxe_enabled=True
+
+# Neutron bootfile DHCP parameter. (string value)
+pxe_bootfile_name=undionly.kpxe
+
+# Bootfile DHCP parameter for UEFI boot mode. (string value)
+uefi_pxe_bootfile_name=ipxe.efi
+
+# Template file for PXE configuration. (string value)
+pxe_config_template=$pybasedir/drivers/modules/ipxe_config.template
+
+# Template file for PXE configuration for UEFI boot loader.
+# (string value)
+uefi_pxe_config_template=$pybasedir/drivers/modules/ipxe_config.template
+{% endif -%}
