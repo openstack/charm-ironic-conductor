@@ -76,5 +76,19 @@ options:
 
       Enabling this option will preserve the data on disk after release (not
       recommended for production).
+  provisioning-network:
+    default: deployment
+    type: string
+    description: |
+      The name or ID of the provisioning network. This network is used to deploy
+      bare metal nodes. This option is mandatory to allow Neutron network interfaces.
+  cleaning-network:
+    default: deployment
+    type: string
+    description: |
+      The name or ID of the cleaning network. This network is used to clean
+      bare metal nodes after they have been releases. This option is mandatory
+      to allow Neutron network interfaces. The same network may be used for both
+      cleaning and provisioning.
 
   

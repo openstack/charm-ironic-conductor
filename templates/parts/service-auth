@@ -14,7 +14,7 @@ password = {{ identity_credentials.credentials_password }}
 project_name = {{identity_credentials.credentials_project}}
 
 
-{% if identity_credentials.service_domain -%}
+{% if identity_credentials.credentials_project_domain_name -%}
 project_domain_name = {{ identity_credentials.credentials_project_domain_name }}
 user_domain_name = {{ identity_credentials.credentials_user_domain_name }}
 {% else -%}
