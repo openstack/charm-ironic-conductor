@@ -58,11 +58,8 @@ class PXEBootBase(object):
         }
 
     def determine_packages(self):
-        default_packages = self.PACKAGES + self.TFTP_PACKAGES
-        use_ipxe = self._config.get('use-ipxe', False)
-        hookenv.log(">>>>>>>>> USE IPXE: %r --> %r" % (use_ipxe, self._config))
-        if use_ipxe:
-            default_packages.extend(self.HTTPD_PACKAGES)
+        default_packages = (
+            self.PACKAGES + self.TFTP_PACKAGES + self.HTTPD_PACKAGES)
         return default_packages
 
     def _copy_resources(self):

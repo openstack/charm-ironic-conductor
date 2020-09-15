@@ -94,7 +94,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     services = ['ironic-conductor', 'tftpd-hpa']
 
     required_relations = [
-        'shared-db', 'amqp', 'identity-credentials']
+        'shared-db', 'amqp', 'identity-credentials', 'ironic-api']
 
     restart_map = {
         IRONIC_CONF: ['ironic-conductor', ],
@@ -129,9 +129,6 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         self.restart_map.update(self.pxe_config.get_restart_map())
     
     def _configure_ipxe_webserver(self):
-        if self.config.get('use-ipxe', False) is False:
-            self.purge_packages.extend(self.pxe_config.HTTPD_PACKAGES)
-            return
         httpd_svc_name = self.pxe_config.HTTPD_SERVICE_NAME
         self.services.append(httpd_svc_name)
         self.restart_map[self.pxe_config.HTTP_SERVER_CONF] = [httpd_svc_name,]

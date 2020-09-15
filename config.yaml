@@ -43,7 +43,7 @@ options:
     type: string
     description: OpenStack Region
   use-ipxe:
-    default: false
+    default: true
     type: boolean
     description: |
       Use iPXE instead of PXE. This option will install an aditional

@@ -20,6 +20,7 @@ charm.use_defaults(
 
 
 @reactive.when('shared-db.available')
+@reactive.when('ironic-api.available')
 @reactive.when('identity-credentials.available')
 @reactive.when('amqp.available')
 def render_stuff(*args):

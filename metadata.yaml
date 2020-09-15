@@ -28,3 +28,5 @@ requires:
     interface: rabbitmq
   identity-credentials:
     interface: keystone-credentials
+  ironic-api:
+    interface: baremetal
