@@ -90,5 +90,14 @@ options:
       bare metal nodes after they have been releases. This option is mandatory
       to allow Neutron network interfaces. The same network may be used for both
       cleaning and provisioning.
-
+  extra-pxe-params:
+    default: ""
+    type: string
+    description: |
+      Additional kernel command line parameters to pass to the deployment kernel.
+      Options must be space delimited and will be passed as is to the deployment image.
+      Aside from regular linux kernel command line parameters, you can also configure
+      the ironic python agent (IPA) from within the deployment image. See the IPA
+      documentation for a list of command line parameters which can be passed via
+      pxe_append_params.
   
