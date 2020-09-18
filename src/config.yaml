@@ -100,4 +100,13 @@ options:
       the ironic python agent (IPA) from within the deployment image. See the IPA
       documentation for a list of command line parameters which can be passed via
       pxe_append_params.
-  
+  automated-cleaning:
+    default: true
+    type: boolean
+    description: |
+      Enables automated cleaning of nodes. This is run when setting a node to available
+      state, or when deleting an instance. Cleaning will bring the node in a baseline
+      state. You can safely disable this feature if all tenants of your OpenStack deployment
+      are trusted, or if you have a single tenant.
+
+      Note: node cleaning may take a long time, especially if secure erase is enabled.
