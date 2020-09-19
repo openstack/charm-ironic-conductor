@@ -15,9 +15,15 @@ from charms_openstack.adapters import (
 import charm.openstack.ironic.controller_utils as controller_utils
 import charms_openstack.adapters as adapters
 import charmhelpers.contrib.network.ip as ch_ip
+import charms.leadership as leadership
+import charms.reactive as reactive
 
 PACKAGES = [
     'ironic-conductor',
+    'python3-keystoneauth1',
+    'python3-keystoneclient',
+    'python3-glanceclient',
+    'python3-swiftclient',
     'python-mysqldb',
     'python3-dracclient',
     'python3-sushy',
@@ -56,6 +62,12 @@ def deployment_interface_ip(args):
 @adapters.config_property
 def internal_interface_ip(args):
     return ch_ip.get_relation_ip("internal")
+
+
+@adapters.config_property
+def temp_url_secret(self):
+    url_secret = leadership.leader_get("temp_url_secret")
+    return url_secret
 
 
 class IronicAdapters(OpenStackRelationAdapters):
@@ -102,19 +114,36 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     }
 
     group = "ironic"
+    mandatory_config = []
 
     def __init__(self, **kw):
         super().__init__(**kw)
         self.pxe_config = controller_utils.get_pxe_config_class(
             self.config)
-        self.packages.extend(self.pxe_config.determine_packages())
-        self.config["tftpboot"] = self.pxe_config.TFTP_ROOT
-        self.config["httpboot"] = self.pxe_config.HTTP_ROOT
-        self.config["ironic_user"] = self.pxe_config.IRONIC_USER
-        self.config["ironic_group"] = self.pxe_config.IRONIC_GROUP
-        self.restart_map.update(self.pxe_config.get_restart_map())
+        self._setup_pxe_config(self.pxe_config)
+        self._configure_defaults()
+        if "neutron" in self.enabled_network_interfaces:
+            self.mandatory_config.extend([
+                "provisioning-network",
+                "cleaning-network"])
+
+    def _configure_defaults(self):
+        net_iface = self.config.get("default-network-interface", None)
+        if not net_iface:
+            self.config["default-network-interface"] = "flat"
+        iface = self.config.get("default-deploy-interface", None)
+        if not iface:
+            self.config["default-deploy-interface"] = "direct"
+
+    def _setup_pxe_config(self, cfg):
+        self.packages.extend(cfg.determine_packages())
+        self.config["tftpboot"] = cfg.TFTP_ROOT
+        self.config["httpboot"] = cfg.HTTP_ROOT
+        self.config["ironic_user"] = cfg.IRONIC_USER
+        self.config["ironic_group"] = cfg.IRONIC_GROUP
+        self.restart_map.update(cfg.get_restart_map())
         self.services.append(
-            self.pxe_config.HTTPD_SERVICE_NAME)
+            cfg.HTTPD_SERVICE_NAME)
 
     def install(self):
         self.configure_source()
@@ -135,3 +164,83 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
                 database=self.config['database'],
                 username=self.config['database-user'], )
         ]
+
+    def _validate_network_interfaces(self, interfaces):
+        valid_interfaces = ["flat", "neutron", "noop"]
+        for interface in interfaces:
+            if interface not in valid_interfaces:
+                raise ValueError(
+                    'Network interface "%s" is not valid. Valid '
+                    'interfaces are: %s' % (
+                        interface, ", ".join(valid_interfaces)))
+    
+    def _validate_default_net_interface(self):
+        net_iface = self.config["default-network-interface"]
+        if net_iface not in self.enabled_network_interfaces:
+            raise ValueError(
+                "default-network-interface (%s) is not enabled "
+                "in enabled-network-interfaces: %s" % ", ".join(
+                    self.enabled_network_interfaces))
+
+    def _validate_deploy_interfaces(self, interfaces):
+        valid_interfaces = ["direct", "iscsi"]
+        has_secret = reactive.is_flag_set("leadership.set.temp_url_secret")
+        for interface in interfaces:
+            if interface not in valid_interfaces:
+                raise ValueError(
+                    "Deploy interface %s is not valid. Valid "
+                    "interfaces are: %s" % (
+                        interface, ", ".join(valid_interfaces)))
+        if reactive.is_flag_set("config.complete"):
+            if "direct" in interfaces and has_secret is False:
+                raise ValueError(
+                    'run "set-temp-url-secret" action on leader to '
+                    'enable "direct" deploy method')
+    
+    def _validate_default_deploy_interface(self):
+        iface = self.config["default-deploy-interface"]
+        if iface not in self.enabled_deploy_interfaces:
+            raise ValueError(
+                "default-deploy-interface (%s) is not enabled "
+                "in enabled-deploy-interfaces: %s" % ", ".join(
+                    self.enabled_deploy_interfaces))
+    
+    @property
+    def enabled_network_interfaces(self):
+        network_interfaces = self.config.get(
+            'enabled-network-interfaces', "").replace(" ", "")
+        return network_interfaces.split(",")
+
+    @property
+    def enabled_deploy_interfaces(self):
+        network_interfaces = self.config.get(
+            'enabled-deploy-interfaces', "").replace(" ", "")
+        return network_interfaces.split(",")
+
+    def custom_assess_status_check(self):
+        try:
+            self._validate_network_interfaces(self.enabled_network_interfaces)
+        except Exception as err:
+            msg = ("invalid enabled-network-interfaces config: %s" % err)
+            return ('blocked', msg)
+
+        try:
+            self._validate_default_net_interface()
+        except Exception as err:
+            msg = ("invalid default-network-interface config: %s" % err)
+            return ('blocked', msg)
+
+        try:
+            self._validate_deploy_interfaces(
+                self.enabled_deploy_interfaces)
+        except Exception as err:
+            msg = ("invalid enabled-deploy-interfaces config: %s" % err)
+            return ('blocked', msg)
+
+        try:
+            self._validate_default_deploy_interface()
+        except Exception as err:
+            msg = ("invalid default-deploy-interface config: %s" % err)
+            return ('blocked', msg)
+
+        return (None, None)

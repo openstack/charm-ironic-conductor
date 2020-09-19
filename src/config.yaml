@@ -77,24 +77,72 @@ options:
       Enabling this option will preserve the data on disk after release (not
       recommended for production).
   provisioning-network:
-    default: deployment
+    default: !!null ""
     type: string
     description: |
       The name or ID of the provisioning network. This network is used to deploy
-      bare metal nodes. This option is mandatory to allow Neutron network interfaces.
+      bare metal nodes. This option is mandatory to allow Neutron network interfaces. 
   cleaning-network:
-    default: deployment
+    default: !!null ""
     type: string
     description: |
       The name or ID of the cleaning network. This network is used to clean
       bare metal nodes after they have been releases. This option is mandatory
       to allow Neutron network interfaces. The same network may be used for both
       cleaning and provisioning.
-  extra-pxe-params:
-    default: ""
+  enabled-network-interfaces:
+    type: string
+    default: "flat, neutron, noop"
+    description: |
+      Comma separated list of network interfaces to be enabled in the Ironic config.
+      Valid options are:
+        * flat
+        * neutron
+        * noop
+
+      Note: When enabling "neutron", you will also have to set the provisioning-network
+      and the cleaning-network options. The settings for these networks can be overwritten
+      per node, but they need to be set globally for ironic to start. The "neutron" network
+      interface is needed if you require additional enablement from a ml2 driver you may
+      have enabled in your deployment, such as switch configuration.
+  default-network-interface:
+    type: string
+    default: "flat"
+    description: |
+      The default network interface to use for nodes that do not explicitly set a network
+      interface type. The default network interface specified here, must also exist in the
+      list of enabled-network-interfaces.
+  enabled-deploy-interfaces:
+    type: string
+    default: "direct, iscsi"
+    description: |
+      Comma separated list of deploy interfaces to use.
+      Valid options are:
+        * direct
+        * iscsi
+
+      Note: To enable the direct deploy interface, the following conditions must be
+      met in your deployment of OpenStack:
+        * ceph-radosgw or swift is deployed and available
+        * glance is deployed and has a relation set to ceph-radosgw or swift
+        * You ran the set-temp-url-secret action of this charm
+      If any of these conditions are not met, the direct deploy interface will not be
+      enabled in the config, and the charm will go into blocked state.
+
+      Note: The iscsi deploy mode requires that ironic-conductor be deployed on a VM
+      or a bare metal machine. That is because the iscsi kernel module is not namespaced,
+      and the ironic-conductor will not be able to log into any iscsi target.
+  default-deploy-interface:
+    type: string
+    default: "direct"
+    description: |
+      The default deploy interface to use for nodes that do not explicitly set a deploy
+      interface.
+  pxe-append-params:
+    default: "nofb nomodeset vga=normal console=tty0 console=ttyS0,115200n8"
     type: string
     description: |
-      Additional kernel command line parameters to pass to the deployment kernel.
+      Kernel command line parameters to pass to the deployment kernel.
       Options must be space delimited and will be passed as is to the deployment image.
       Aside from regular linux kernel command line parameters, you can also configure
       the ironic python agent (IPA) from within the deployment image. See the IPA
@@ -104,9 +152,10 @@ options:
     default: true
     type: boolean
     description: |
-      Enables automated cleaning of nodes. This is run when setting a node to available
+      Globally enables automated cleaning of nodes. This is run when setting a node to available
       state, or when deleting an instance. Cleaning will bring the node in a baseline
       state. You can safely disable this feature if all tenants of your OpenStack deployment
       are trusted, or if you have a single tenant.
 
+      Note: Automated cleaning can be toggled on a per node basis, via node properties.
       Note: node cleaning may take a long time, especially if secure erase is enabled.

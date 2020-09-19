@@ -9,7 +9,9 @@ tftp_root={{tftpboot}}
 # value)
 tftp_server = {{ options.deployment_interface_ip }}
 
-pxe_append_params = nofb nomodeset vga=normal console=tty0 console=ttyS0,115200n8 {{ options.extra_pxe_params }}
+{% if options.pxe_append_params -%}
+pxe_append_params = {{ options.pxe_append_params }}
+{% endif -%}
 
 {% if options.use_ipxe -%}
 # Enable iPXE boot. (boolean value)

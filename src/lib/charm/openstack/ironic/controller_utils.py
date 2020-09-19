@@ -114,3 +114,11 @@ def get_pxe_config_class(charm_config):
     if series == "bionic":
         return PXEBootBionic(charm_config)
     return PXEBootBase(charm_config)
+
+# TODO: Create keystone session
+# TODO: create swift client
+# TODO: generate secret
+# TODO: set tmp-url-key to secret
+# TODO: Config property function that returns the secret from leader data
+def set_temp_url_secret(keystone):
+    pass

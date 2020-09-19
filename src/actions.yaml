@@ -1,0 +1,13 @@
+set-temp-url-secret:
+  description: |
+    Set Temp-Url-Key in the service object storage account. This enables Ironic
+    to use the "direct" deploy method. In order for this to work, both Glance
+    and Ironic must use the same tenant in their respective configs.
+
+    This action must be performed on the ironic-conductor leader, after the
+    deployment is complete. Glance must either use Swift/RadosGW as a storage
+    backend, or multi-backend must be enabled in Glance with Swift as one of
+    the supported stores.
+
+    A relation can be created between Glance and RadosGW, which will enable
+    RadosGW to act as a backend for Glance.

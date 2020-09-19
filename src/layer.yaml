@@ -1,4 +1,5 @@
 includes:
+  - layer:leadership
   - layer:openstack-principle
   - interface:mysql-shared
   - interface:rabbitmq
@@ -8,4 +9,6 @@ repo: https://github.com/gabriel-samfira/charm-ironic-conductor
 options:
   basic:
     use_venv: true
-    include_system_packages: true
+    include_system_packages: False
+    packages: [ 'libffi-dev', 'libssl-dev', 'libpython3.6-dev' ]
+
