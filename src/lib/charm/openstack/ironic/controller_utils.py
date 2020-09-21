@@ -1,9 +1,7 @@
 import os
 import shutil
 
-from charmhelpers.core.templating import render
 import charmhelpers.core.host as ch_host
-import charmhelpers.fetch as fetch
 
 
 _IRONIC_USER = "ironic"
@@ -11,7 +9,7 @@ _IRONIC_GROUP = "ironic"
 
 
 class PXEBootBase(object):
-    
+
     TFTP_ROOT = "/tftpboot"
     HTTP_ROOT = "/httpboot"
     HTTP_SERVER_CONF = "/etc/nginx/nginx.conf"
@@ -51,10 +49,10 @@ class PXEBootBase(object):
 
     def get_restart_map(self):
         return {
-            self.TFTP_CONFIG: [self.TFTPD_SERVICE,],
-            self.MAP_FILE: [self.TFTPD_SERVICE,],
-            self.GRUB_CFG: [self.TFTPD_SERVICE,],
-            self.HTTP_SERVER_CONF: [self.HTTPD_SERVICE_NAME,],
+            self.TFTP_CONFIG: [self.TFTPD_SERVICE, ],
+            self.MAP_FILE: [self.TFTPD_SERVICE, ],
+            self.GRUB_CFG: [self.TFTPD_SERVICE, ],
+            self.HTTP_SERVER_CONF: [self.HTTPD_SERVICE_NAME, ],
         }
 
     def determine_packages(self):
@@ -77,13 +75,13 @@ class PXEBootBase(object):
     def _ensure_folders(self):
         if os.path.isdir(self.TFTP_ROOT) is False:
             os.makedirs(self.TFTP_ROOT)
-        
+
         if os.path.isdir(self.HTTP_ROOT) is False:
             os.makedirs(self.HTTP_ROOT)
 
         if os.path.isdir(self.GRUB_DIR) is False:
             os.makedirs(self.GRUB_DIR)
-        
+
         ch_host.chownr(
             self.TFTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
         ch_host.chownr(
@@ -114,11 +112,3 @@ def get_pxe_config_class(charm_config):
     if series == "bionic":
         return PXEBootBionic(charm_config)
     return PXEBootBase(charm_config)
-
-# TODO: Create keystone session
-# TODO: create swift client
-# TODO: generate secret
-# TODO: set tmp-url-key to secret
-# TODO: Config property function that returns the secret from leader data
-def set_temp_url_secret(keystone):
-    pass

@@ -35,7 +35,7 @@ import charms_openstack.charm as charm
 
 import charmhelpers.core as ch_core
 
-import charm.openstack.ironic.clients as clients
+import charm.openstack.ironic.api_utils as api_utils
 
 charms_openstack.bus.discover()
 
@@ -52,12 +52,12 @@ def set_temp_url_secret(*args):
     identity_service = reactive.endpoint_from_flag(
         'identity-credentials.available')
     try:
-        keystone_session = clients.create_keystone_session(identity_service)
+        keystone_session = api_utils.create_keystone_session(identity_service)
     except Exception as e:
         ch_core.hookenv.action_fail('Failed to create keystone session ("{}")'
                                     .format(e))
 
-    os_cli = clients.OSClients(keystone_session)
+    os_cli = api_utils.OSClients(keystone_session)
     if os_cli.has_swift() is False:
         ch_core.hookenv.action_fail(
             'Swift not yet available. Please wait for deployment to finish')
@@ -65,7 +65,7 @@ def set_temp_url_secret(*args):
     if os_cli.has_glance() is False:
         ch_core.hookenv.action_fail(
             'Glance not yet available. Please wait for deployment to finish')
-    
+
     if "swift" not in os_cli.glance_stores:
         ch_core.hookenv.action_fail(
             'Glance does not support Swift storage backend. '

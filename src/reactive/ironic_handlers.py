@@ -2,10 +2,8 @@ from __future__ import absolute_import
 
 import charms.reactive as reactive
 import charmhelpers.core.hookenv as hookenv
-import charms.leadership as leadership
 
 import charms_openstack.charm as charm
-import charm.openstack.ironic.ironic as ironic
 
 # Use the charms.openstack defaults for common states and hooks
 charm.use_defaults(

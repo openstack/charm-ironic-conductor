@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import mock
 
 from charm.openstack.ironic import ironic
@@ -92,7 +91,7 @@ class TestIronicHandlers(test_utils.PatchHelper):
             'rabbit-vhost': 'openstack',
         }
         self.ironic_charm.get_amqp_credentials.return_value = list(
-            config.values()) 
+            config.values())
         handlers.request_amqp_access(amqp)
         amqp.request_access.assert_called_once_with(
             username=config['rabbit-user'],
@@ -101,16 +100,16 @@ class TestIronicHandlers(test_utils.PatchHelper):
 
     def test_request_database_access(self):
         database = mock.MagicMock()
-        dbs = [{
-            "database": "ironic",
-            "username": "ironic",
-        },
-        # Ironic only needs one DB, but the code can handle more,
-        # so we test it.
-        {
-            "database": "second_db",
-            "username": "second_user",
-        }]
+        dbs = [
+            {
+                "database": "ironic",
+                "username": "ironic",
+            },
+            {
+                "database": "second_db",
+                "username": "second_user",
+            }
+        ]
         self.ironic_charm.get_database_setup.return_value = dbs
         calls = [mock.call(**i) for i in dbs]
 

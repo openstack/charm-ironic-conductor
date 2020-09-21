@@ -19,7 +19,7 @@ def create_keystone_session(keystone, verify=True):
 
     project_name = keystone.credentials_project()
 
-    auth_url =  "%s://%s:%s" % (
+    auth_url = "%s://%s:%s" % (
         keystone.auth_protocol(),
         keystone.auth_host(),
         keystone.credentials_port())
@@ -30,7 +30,7 @@ def create_keystone_session(keystone, verify=True):
     })
 
     keystone_version = keystone.api_version()
-    if keystone_version and int(keystone_version) == 3:
+    if keystone_version and str(keystone_version) == "3":
         plugin_name = "v3" + plugin_name
 
         project_domain_name = keystone.credentials_project_domain_name()
@@ -60,7 +60,8 @@ class OSClients(object):
     def _stores_info(self):
         if self._stores:
             return self._stores
-        self._stores = self._img_cli.images.get_stores_info().get(
+        store = self._img_cli.images.get_stores_info()
+        self._stores = store.get(
             "stores", [])
         return self._stores
 
@@ -79,7 +80,7 @@ class OSClients(object):
         props = {}
         for prop, val in acct[0].items():
             if prop.startswith('x-account-meta-'):
-                props[prop.replace("x-account-meta-","")] = val
+                props[prop.replace("x-account-meta-", "")] = val
         return props
 
     def set_object_account_property(self, prop, value):
@@ -101,16 +102,12 @@ class OSClients(object):
 
     def _has_service_type(self, svc_type, interface="public"):
         try:
-            svc_id = self._ks.services.find(type=svc_type)
-        except ks_exc.http.NotFound:
-            return False
-
-        try:
+            svc = self._ks.services.find(type=svc_type)
+            print(svc.id)
             self._ks.endpoints.find(
-                service_id=svc_id.id, interface=interface)
+                service_id=svc.id, interface=interface)
         except ks_exc.http.NotFound:
             return False
-
         return True
 
     def has_swift(self):
@@ -118,5 +115,3 @@ class OSClients(object):
 
     def has_glance(self):
         return self._has_service_type("image")
-
-    
