@@ -68,7 +68,7 @@ def internal_interface_ip(args):
 
 
 @adapters.config_property
-def temp_url_secret(self):
+def temp_url_secret(args):
     url_secret = leadership.leader_get("temp_url_secret")
     return url_secret
 
@@ -117,7 +117,10 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     }
 
     group = "ironic"
-    mandatory_config = []
+    mandatory_config = [
+        "enabled-network-interfaces",
+        "enabled-deploy-interfaces",
+    ]
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -140,13 +143,15 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
 
     def _setup_pxe_config(self, cfg):
         self.packages.extend(cfg.determine_packages())
+        self.packages = list(set(self.packages))
         self.config["tftpboot"] = cfg.TFTP_ROOT
         self.config["httpboot"] = cfg.HTTP_ROOT
         self.config["ironic_user"] = cfg.IRONIC_USER
         self.config["ironic_group"] = cfg.IRONIC_GROUP
         self.restart_map.update(cfg.get_restart_map())
-        self.services.append(
-            cfg.HTTPD_SERVICE_NAME)
+        if cfg.HTTPD_SERVICE_NAME not in self.services:
+            self.services.append(
+                cfg.HTTPD_SERVICE_NAME)
 
     def install(self):
         self.configure_source()
@@ -182,8 +187,9 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         if net_iface not in self.enabled_network_interfaces:
             raise ValueError(
                 "default-network-interface (%s) is not enabled "
-                "in enabled-network-interfaces: %s" % ", ".join(
-                    self.enabled_network_interfaces))
+                "in enabled-network-interfaces: %s" % (
+                    net_iface,
+                    ", ".join(self.enabled_network_interfaces)))
 
     def _validate_deploy_interfaces(self, interfaces):
         valid_interfaces = VALID_DEPLOY_INTERFACES
@@ -191,8 +197,8 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         for interface in interfaces:
             if interface not in valid_interfaces:
                 raise ValueError(
-                    "Deploy interface %s is not valid. Valid "
-                    "interfaces are: %s" % (
+                    'Deploy interface "%s" is not valid. Valid '
+                    'interfaces are: %s' % (
                         interface, ", ".join(valid_interfaces)))
         if reactive.is_flag_set("config.complete"):
             if "direct" in interfaces and has_secret is False:
@@ -205,8 +211,9 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         if iface not in self.enabled_deploy_interfaces:
             raise ValueError(
                 "default-deploy-interface (%s) is not enabled "
-                "in enabled-deploy-interfaces: %s" % ", ".join(
-                    self.enabled_deploy_interfaces))
+                "in enabled-deploy-interfaces: %s" % (
+                    iface, ", ".join(
+                        self.enabled_deploy_interfaces)))
 
     @property
     def enabled_network_interfaces(self):

@@ -103,7 +103,6 @@ class OSClients(object):
     def _has_service_type(self, svc_type, interface="public"):
         try:
             svc = self._ks.services.find(type=svc_type)
-            print(svc.id)
             self._ks.endpoints.find(
                 service_id=svc.id, interface=interface)
         except ks_exc.http.NotFound:
