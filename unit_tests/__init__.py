@@ -45,3 +45,15 @@ sys.modules['charms.reactive.bus'] = charms.reactive.bus
 sys.modules['charms.reactive.bus'] = charms.reactive.decorators
 sys.modules['charms.reactive.flags'] = charms.reactive.flags
 sys.modules['charms.reactive.relations'] = charms.reactive.relations
+
+keystoneauth1 = mock.MagicMock()
+sys.modules['keystoneauth1'] = keystoneauth1
+
+glanceclient = mock.MagicMock()
+sys.modules['glanceclient'] = glanceclient
+
+swiftclient = mock.MagicMock()
+sys.modules['swiftclient'] = swiftclient
+
+keystoneclient = mock.MagicMock()
+sys.modules['keystoneclient'] = keystoneclient

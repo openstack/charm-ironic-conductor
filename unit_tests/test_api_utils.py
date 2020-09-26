@@ -20,6 +20,10 @@ from keystoneauth1 import exceptions as ks_exc
 import charm.openstack.ironic.api_utils as api_utils
 
 
+class _NotFoundException(Exception):
+    pass
+
+
 class TestGetKeystoneSession(test_utils.PatchHelper):
 
     def setUp(self):
@@ -54,7 +58,8 @@ class TestGetKeystoneSession(test_utils.PatchHelper):
 
         self.loading.get_plugin_loader.assert_called_with("v3password")
         loader.load_from_options.assert_called_with(**self.ks_expect)
-        self.ks_session.Session.assert_called_with(auth=auth, verify=True)
+        self.ks_session.Session.assert_called_with(
+            auth=auth, verify=api_utils.SYSTEM_CA_BUNDLE)
 
     def test_create_keystone_session_v2(self):
         self.patch_object(api_utils, 'loading')
@@ -70,7 +75,8 @@ class TestGetKeystoneSession(test_utils.PatchHelper):
 
         self.loading.get_plugin_loader.assert_called_with("password")
         loader.load_from_options.assert_called_with(**self.ks_expect)
-        self.ks_session.Session.assert_called_with(auth=auth, verify=True)
+        self.ks_session.Session.assert_called_with(
+            auth=auth, verify=api_utils.SYSTEM_CA_BUNDLE)
 
 
 class TestOSClients(test_utils.PatchHelper):
@@ -108,7 +114,8 @@ class TestOSClients(test_utils.PatchHelper):
 
         self.target = api_utils.OSClients(self.session)
         self.glance_client.assert_called_with(session=self.session, version=2)
-        self.swift_con.assert_called_with(session=self.session, cacert=None)
+        self.swift_con.assert_called_with(
+            session=self.session, cacert=api_utils.SYSTEM_CA_BUNDLE)
         self.ks_client.assert_called_with(session=self.session)
 
     def test_stores_info(self):
@@ -173,6 +180,7 @@ class TestOSClients(test_utils.PatchHelper):
         self.assertTrue(result)
 
     def test_does_not_have_service_type(self):
+        ks_exc.http.NotFound = _NotFoundException
         self.ks_client.services.find.side_effect = ks_exc.http.NotFound()
         self.target._ks = self.ks_client
 

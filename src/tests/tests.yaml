@@ -1,0 +1,29 @@
+charm_name: ironic-api
+gate_bundles:
+- focal-ussuri
+- bionic-train
+- bionic-ussuri
+smoke_bundles:
+- bionic-ussuri
+dev_bundles:
+- focal-victoria
+target_deploy_status:
+  vault:
+    workload-status: blocked
+    workload-status-message: Vault needs to be initialized
+  ironic-conductor:
+    workload-status: blocked
+    workload-status-message: invalid enabled-deploy-interfaces config
+configure:
+- zaza.openstack.charm_tests.vault.setup.auto_initialize
+- zaza.openstack.charm_tests.ironic.setup.set_temp_url_secret
+- zaza.openstack.charm_tests.ironic.setup.add_ironic_deployment_image
+- zaza.openstack.charm_tests.ironic.setup.add_ironic_os_image
+- zaza.openstack.charm_tests.ironic.setup.create_bm_flavors
+# Ironic will require a flat network to test the flat network type. Once a proper
+# testing environment will be available for Ironic, we will need to add the setup
+# call to create that flat network
+#- zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
+- zaza.openstack.charm_tests.nova.setup.manage_ssh_key
+tests:
+- zaza.openstack.charm_tests.ironic.tests.IronicTest

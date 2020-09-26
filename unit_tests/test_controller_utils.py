@@ -24,16 +24,6 @@ import charm.openstack.ironic.controller_utils as controller_utils
 
 class TestGetPXEBootClass(test_utils.PatchHelper):
 
-    def test_get_pxe_config_class_bionic(self):
-        self.patch_object(
-            ch_host, 'get_distrib_codename')
-        self.get_distrib_codename.return_value = "bionic"
-        charm_config = {}
-        pxe_class = controller_utils.get_pxe_config_class(charm_config)
-        self.assertTrue(
-            isinstance(
-                pxe_class, controller_utils.PXEBootBionic))
-
     def test_get_pxe_config_class(self):
         self.patch_object(
             ch_host, 'get_distrib_codename')

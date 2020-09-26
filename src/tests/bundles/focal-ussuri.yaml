@@ -1,0 +1,284 @@
+options:
+  source: &source distro
+series: focal
+local_overlay_enabled: false
+relations:
+- - nova-ironic
+  - ironic-api
+- - ironic-conductor
+  - ironic-api
+- - neutron-ironic-agent:identity-credentials
+  - keystone
+- - neutron-ironic-agent
+  - neutron-api
+- - neutron-openvswitch
+  - neutron-api
+- - ironic-api:amqp
+  - rabbitmq-server:amqp
+- - ironic-api
+  - keystone
+- - ironic-api:shared-db
+  - ironic-api-mysql-router:shared-db
+- - ironic-conductor:amqp
+  - rabbitmq-server:amqp
+- - ironic-conductor
+  - keystone
+- - ironic-conductor:shared-db
+  - ironic-conductor-mysql-router:shared-db
+- - nova-ironic:amqp
+  - rabbitmq-server:amqp
+- - nova-ironic
+  - glance
+- - nova-ironic
+  - keystone
+- - nova-ironic
+  - nova-cloud-controller
+- - neutron-gateway:amqp
+  - rabbitmq-server:amqp
+- - keystone:shared-db
+  - keystone-mysql-router:shared-db
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - glance:identity-service
+  - keystone:identity-service
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - neutron-api:shared-db
+  - neutron-api-mysql-router:shared-db
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - neutron-gateway:neutron-plugin-api
+  - neutron-api:neutron-plugin-api
+- - glance:shared-db
+  - glance-mysql-router:shared-db
+- - glance:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:quantum-network-service
+  - neutron-gateway:quantum-network-service
+- - nova-cloud-controller:shared-db
+  - nova-cloud-controller-mysql-router:shared-db
+- - nova-cloud-controller:neutron-api
+  - neutron-api:neutron-api
+- - cinder:image-service
+  - glance:image-service
+- - cinder:amqp
+  - rabbitmq-server:amqp
+- - cinder:identity-service
+  - keystone:identity-service
+- - cinder:cinder-volume-service
+  - nova-cloud-controller:cinder-volume-service
+- - cinder:shared-db
+  - cinder-mysql-router:shared-db
+- - placement:shared-db
+  - placement-mysql-router:shared-db
+- - placement
+  - keystone
+- - placement
+  - nova-cloud-controller
+- - ceph-mon:client
+  - nova-ironic:ceph
+- - ceph-mon:client
+  - glance:ceph
+- - ceph-radosgw:mon
+  - ceph-mon:radosgw
+- - ceph-radosgw:identity-service
+  - keystone:identity-service
+- - ceph-osd:mon
+  - ceph-mon:osd
+- - ceph-radosgw:object-store
+  - glance
+- - mysql-innodb-cluster:db-router
+  - nova-cloud-controller-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - keystone-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - glance-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - neutron-api-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - placement-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - cinder-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - ironic-api-mysql-router:db-router
+- - mysql-innodb-cluster:db-router
+  - ironic-conductor-mysql-router:db-router
+- - vault-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - vault:shared-db
+  - vault-mysql-router:shared-db
+- - vault:certificates
+  - ceph-radosgw
+- - vault:certificates
+  - cinder
+- - vault:certificates
+  - glance:certificates
+- - vault:certificates
+  - keystone:certificates
+- - vault:certificates
+  - neutron-api:certificates
+- - vault:certificates
+  - nova-cloud-controller:certificates
+- - vault:certificates
+  - placement:certificates
+- - vault
+  - ironic-conductor
+- - vault:certificates
+  - ironic-api:certificates
+- - ironic-api
+  - hacluster-ironic
+services:
+  nova-cloud-controller-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  keystone-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  glance-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  neutron-api-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  placement-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  vault-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  cinder-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  ironic-api-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  ironic-conductor-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  mysql-innodb-cluster:
+    charm: cs:~openstack-charmers-next/mysql-innodb-cluster
+    num_units: 3
+    constraints: mem=4G
+    options:
+      source: *source
+  cinder:
+    charm: cs:~openstack-charmers-next/cinder
+    num_units: 1
+    constraints: mem=2G
+    options:
+      block-device: vdb
+      glance-api-version: 2
+      openstack-origin: *source
+      worker-multiplier: 0.25
+    storage:
+      block-devices: cinder,50G
+  ceph-radosgw:
+    charm: cs:~openstack-charmers-next/ceph-radosgw
+    num_units: 1
+    constraints: mem=2G
+    options:
+      source: *source
+      namespace-tenants: True
+  ceph-mon:
+    charm: cs:ceph-mon
+    num_units: 3
+    constraints: mem=2G
+    options:
+      expected-osd-count: 3
+      source: *source
+  ceph-osd:
+    charm: cs:ceph-osd
+    num_units: 3
+    constraints: mem=2G
+    options:
+      source: *source
+    storage:
+      osd-devices: 'cinder,30G'
+  glance:
+    charm: cs:~openstack-charmers-next/glance
+    num_units: 1
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+      worker-multiplier: 0.25
+  keystone:
+    charm: cs:~openstack-charmers-next/keystone
+    num_units: 1
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+      worker-multiplier: 0.25
+  neutron-api:
+    charm: cs:~openstack-charmers-next/neutron-api
+    num_units: 1
+    constraints: mem=2G
+    options:
+      flat-network-providers: "physnet1"
+      neutron-security-groups: true
+      openstack-origin: *source
+      manage-neutron-plugin-legacy-mode: false
+      worker-multiplier: 0.25
+  neutron-gateway:
+    charm: cs:~openstack-charmers-next/neutron-gateway
+    num_units: 1
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+      enable-isolated-metadata: true
+      enable-metadata-network: true
+      bridge-mappings: physnet1:br-ex
+  nova-cloud-controller:
+    charm: cs:~openstack-charmers-next/nova-cloud-controller
+    num_units: 1
+    constraints: mem=2G
+    options:
+      network-manager: Neutron
+      openstack-origin: *source
+      worker-multiplier: 0.25
+  nova-ironic:
+    charm: cs:~openstack-charmers-next/nova-compute
+    num_units: 1
+    constraints: mem=2G
+    options:
+      enable-live-migration: false
+      enable-resize: false
+      openstack-origin: *source
+      virt-type: ironic
+  placement:
+    charm: cs:placement
+    num_units: 1
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+      worker-multiplier: 0.25
+  rabbitmq-server:
+    charm: cs:rabbitmq-server
+    num_units: 1
+    constraints: mem=2G
+  hacluster-ironic:
+    charm: cs:~openstack-charmers-next/hacluster
+    num_units: 0
+  ironic-api:
+    charm: cs:~openstack-charmers-next/ironic-api
+    num_units: 3
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+  ironic-conductor:
+    charm: ../../../ironic-conductor
+    num_units: 1
+    constraints: mem=2G
+    options:
+      openstack-origin: *source
+      max-tftp-block-size: 1418
+      disable-secure-erase: true
+      use-ipxe: true
+      enabled-network-interfaces: "flat, noop"
+  neutron-openvswitch:
+    charm: cs:~openstack-charmers-next/neutron-openvswitch
+    num_units: 0
+    options:
+      bridge-mappings: physnet1:br-ex
+  neutron-ironic-agent:
+    charm: cs:~openstack-charmers-next/neutron-api-plugin-ironic
+    num_units: 0
+    options:
+      openstack-origin: *source
+  vault:
+    charm: cs:~openstack-charmers-next/vault
+    num_units: 1

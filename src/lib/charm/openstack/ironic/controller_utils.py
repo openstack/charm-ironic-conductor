@@ -25,7 +25,7 @@ class PXEBootBase(object):
         "/usr/lib/syslinux/modules/bios/chain.c32": "chain.c32",
         "/usr/lib/syslinux/modules/bios/ldlinux.c32": "ldlinux.c32",
         "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed": "grubx64.efi",
-        "/usr/lib/shim/shim.efi.signed": "bootx64.efi",
+        "/usr/lib/shim/shimx64.efi.signed": "bootx64.efi",
         "/usr/lib/ipxe/undionly.kpxe": "undionly.kpxe",
         "/usr/lib/ipxe/ipxe.efi": "ipxe.efi",
     }
@@ -65,7 +65,7 @@ class PXEBootBase(object):
         for f in self.FILE_MAP:
             if os.path.isfile(f) is False:
                 raise ValueError(
-                    "Missing required file %s. Package not installes?" % f)
+                    "Missing required file %s. Package not installed?" % f)
             shutil.copy(
                 f, os.path.join(self.TFTP_ROOT, self.FILE_MAP[f]),
                 follow_symlinks=True)
@@ -88,27 +88,9 @@ class PXEBootBase(object):
             self.HTTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
 
 
-class PXEBootBionic(PXEBootBase):
-
-    # This is a file map of source to destination. The destination is
-    # relative to self.TFTP_ROOT
-    FILE_MAP = {
-        "/usr/lib/PXELINUX/pxelinux.0": "pxelinux.0",
-        "/usr/lib/syslinux/modules/bios/chain.c32": "chain.c32",
-        "/usr/lib/syslinux/modules/bios/ldlinux.c32": "ldlinux.c32",
-        "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed": "grubx64.efi",
-        "/usr/lib/shim/shimx64.efi.signed": "bootx64.efi",
-        "/usr/lib/ipxe/undionly.kpxe": "undionly.kpxe",
-        "/usr/lib/ipxe/ipxe.efi": "ipxe.efi",
-    }
-
-
 def get_pxe_config_class(charm_config):
     # We may need to make slight adjustments to package names and/or
     # configuration files, based on the version of Ubuntu we are installing
     # on. This function serves as a factory which will return an instance
     # of the proper class to the charm. For now we only have one class.
-    series = ch_host.get_distrib_codename()
-    if series == "bionic":
-        return PXEBootBionic(charm_config)
     return PXEBootBase(charm_config)

@@ -10,6 +10,7 @@ from charms_openstack.adapters import (
     DatabaseRelationAdapter,
     OpenStackRelationAdapters,
 )
+from charmhelpers.contrib.openstack.utils import os_release
 
 import charm.openstack.ironic.controller_utils as controller_utils
 import charms_openstack.adapters as adapters
@@ -19,15 +20,14 @@ import charms.reactive as reactive
 
 PACKAGES = [
     'ironic-conductor',
+    'python3-dracclient',
     'python3-keystoneauth1',
     'python3-keystoneclient',
     'python3-glanceclient',
-    'python3-swiftclient',
-    'python-mysqldb',
-    'python3-dracclient',
     'python3-sushy',
+    'python3-swiftclient',
+    'python3-mysqldb',
     'python3-ironicclient',
-    'python3-scciclient',
     'shellinabox',
     'openssl',
     'socat',
@@ -49,6 +49,100 @@ VALID_NETWORK_INTERFACES = ["neutron", "flat", "noop"]
 VALID_DEPLOY_INTERFACES = ["direct", "iscsi"]
 DEFAULT_DEPLOY_IFACE = "flat"
 DEFAULT_NET_IFACE = "direct"
+
+# The IPMI HW type requires only ipmitool to function. This HW type
+# remains pretty much unchanged across OpenStack releases and *should*
+# work
+_NOOP_INTERFACES = {
+    'enabled_bios_interfaces': 'no-bios',
+    'enabled_management_interfaces': 'noop',
+    'enabled_inspect_interfaces': 'no-inspect',
+    'enabled_console_interfaces': 'no-console',
+    'enabled_raid_interfaces': 'no-raid',
+    'enabled_vendor_interfaces': 'no-vendor',
+}
+_IPMI_HARDWARE_TYPE = {
+    'needed_packages': ['ipmitool', 'shellinabox', 'socat'],
+    'config_options': {
+        'enabled_hardware_types': ['ipmi', 'intel-ipmi'],
+        'enabled_management_interfaces': [
+            'ipmitool', 'intel-ipmitool'],
+        'enabled_inspect_interfaces': [],
+        'enabled_power_interfaces': ['ipmitool'],
+        'enabled_console_interfaces': [
+            'ipmitool-socat',
+            'ipmitool-shellinabox'],
+        'enabled_raid_interfaces': [],
+        'enabled_vendor_interfaces': ['ipmitool'],
+        'enabled_boot_interfaces': ['pxe'],
+        'enabled_bios_interfaces': []
+    }
+}
+
+_HW_TYPES_MAP = collections.OrderedDict([
+    ('train', {
+        'ipmi': _IPMI_HARDWARE_TYPE,
+        'redfish': {
+            'needed_packages': ['python3-sushy'],
+            'config_options': {
+                'enabled_hardware_types': ['redfish'],
+                'enabled_management_interfaces': ['redfish'],
+                'enabled_inspect_interfaces': ['redfish'],
+                'enabled_power_interfaces': ['redfish'],
+                'enabled_console_interfaces': [],
+                'enabled_raid_interfaces': [],
+                'enabled_vendor_interfaces': [],
+                'enabled_boot_interfaces': ['pxe'],
+                'enabled_bios_interfaces': []
+            }
+        },
+        'idrac': {
+            'needed_packages': ['python-dracclient', 'python3-sushy'],
+            'config_options': {
+                'enabled_hardware_types': ['idrac'],
+                'enabled_management_interfaces': ['idrac-redfish'],
+                'enabled_inspect_interfaces': ['idrac-redfish'],
+                'enabled_power_interfaces': ['idrac-redfish'],
+                'enabled_console_interfaces': [],
+                'enabled_raid_interfaces': ['idrac-wsman'],
+                'enabled_vendor_interfaces': ['idrac-wsman'],
+                'enabled_boot_interfaces': ['pxe'],
+                'enabled_bios_interfaces': []
+            }
+        }
+    }),
+    ('ussuri', {
+        'ipmi': _IPMI_HARDWARE_TYPE,
+        'redfish': {
+            'needed_packages': ['python3-sushy'],
+            'config_options': {
+                'enabled_hardware_types': ['redfish'],
+                'enabled_management_interfaces': ['redfish'],
+                'enabled_inspect_interfaces': ['redfish'],
+                'enabled_power_interfaces': ['redfish'],
+                'enabled_console_interfaces': [],
+                'enabled_raid_interfaces': [],
+                'enabled_vendor_interfaces': [],
+                'enabled_boot_interfaces': ['pxe', 'redfish-virtual-media'],
+                'enabled_bios_interfaces': [],
+            }
+        },
+        'idrac': {
+            'needed_packages': ['python-dracclient', 'python3-sushy'],
+            'config_options': {
+                'enabled_hardware_types': ['idrac'],
+                'enabled_management_interfaces': ['idrac-redfish'],
+                'enabled_inspect_interfaces': ['idrac-redfish'],
+                'enabled_power_interfaces': ['idrac-redfish'],
+                'enabled_console_interfaces': [],
+                'enabled_raid_interfaces': ['idrac-wsman'],
+                'enabled_vendor_interfaces': ['idrac-wsman'],
+                'enabled_boot_interfaces': ['pxe'],
+                'enabled_bios_interfaces': ['idrac-wsman']
+            }
+        }
+    })
+])
 
 OPENSTACK_RELEASE_KEY = 'ironic-charm.openstack-release-version'
 
@@ -89,6 +183,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     release = 'train'
     name = 'ironic'
     packages = PACKAGES
+    python_version = 3
 
     service_type = 'ironic'
     default_service = 'ironic-conductor'
@@ -127,6 +222,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         self.pxe_config = controller_utils.get_pxe_config_class(
             self.config)
         self._setup_pxe_config(self.pxe_config)
+        self._setup_power_adapter_config()
         self._configure_defaults()
         if "neutron" in self.enabled_network_interfaces:
             self.mandatory_config.extend([
@@ -140,6 +236,65 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         iface = self.config.get("default-deploy-interface", None)
         if not iface:
             self.config["default-deploy-interface"] = DEFAULT_DEPLOY_IFACE
+
+    def _get_hw_type_map(self):
+        release = os_release(self.release_pkg)
+        supported = list(_HW_TYPES_MAP.keys())
+        latest = supported[-1]
+        hw_type_map = _HW_TYPES_MAP.get(
+            release, _HW_TYPES_MAP[latest])
+        return hw_type_map
+
+    def _get_power_adapter_packages(self):
+        pkgs = []
+        hw_type_map = self._get_hw_type_map()
+        for hw_type in self.enabled_hw_types:
+            needed_pkgs = hw_type_map.get(
+                hw_type, {}).get("needed_packages", [])
+            pkgs.extend(needed_pkgs)
+        return list(set(pkgs))
+
+    def _get_hardware_types_config(self):
+        hw_type_map = self._get_hw_type_map()
+        configs = {}
+        for hw_type in self.enabled_hw_types:
+            details = hw_type_map.get(hw_type, None)
+            if details is None:
+                # Not a valid hardware type. No need to raise here,
+                # we will let the operator know when we validate the
+                # config in custom_assess_status_check()
+                continue
+            driver_cfg = details['config_options']
+            for cfg_opt in driver_cfg.items():
+                if not configs.get(cfg_opt[0], None):
+                    configs[cfg_opt[0]] = cfg_opt[1]
+                else:
+                    configs[cfg_opt[0]].extend(cfg_opt[1])
+                opt_list = list(set(configs[cfg_opt[0]]))
+                opt_list.sort()
+                configs[cfg_opt[0]] = opt_list
+
+        if self.config.get('use-ipxe', None):
+            configs["enabled_boot_interfaces"].append('ipxe')
+
+        # append the noop interfaces at the end
+        for noop in _NOOP_INTERFACES:
+            if configs.get(noop, None) is not None:
+                configs[noop].append(_NOOP_INTERFACES[noop])
+
+        for opt in configs:
+            if len(configs[opt]) > 0:
+                configs[opt] = ", ".join(configs[opt])
+            else:
+                configs[opt] = ""
+        return configs
+
+    def _setup_power_adapter_config(self):
+        pkgs = self._get_power_adapter_packages()
+        config = self._get_hardware_types_config()
+        self.packages.extend(pkgs)
+        self.packages = list(set(self.packages))
+        self.config["hardware_type_cfg"] = config
 
     def _setup_pxe_config(self, cfg):
         self.packages.extend(cfg.determine_packages())
@@ -178,7 +333,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         for interface in interfaces:
             if interface not in valid_interfaces:
                 raise ValueError(
-                    'Network interface "%s" is not valid. Valid '
+                    'Network interface %s is not valid. Valid '
                     'interfaces are: %s' % (
                         interface, ", ".join(valid_interfaces)))
 
@@ -197,14 +352,14 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         for interface in interfaces:
             if interface not in valid_interfaces:
                 raise ValueError(
-                    'Deploy interface "%s" is not valid. Valid '
+                    'Deploy interface %s is not valid. Valid '
                     'interfaces are: %s' % (
                         interface, ", ".join(valid_interfaces)))
         if reactive.is_flag_set("config.complete"):
             if "direct" in interfaces and has_secret is False:
                 raise ValueError(
-                    'run "set-temp-url-secret" action on leader to '
-                    'enable "direct" deploy method')
+                    'run set-temp-url-secret action on leader to '
+                    'enable direct deploy method')
 
     def _validate_default_deploy_interface(self):
         iface = self.config["default-deploy-interface"]
@@ -215,11 +370,28 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
                     iface, ", ".join(
                         self.enabled_deploy_interfaces)))
 
+    def _validate_enabled_hw_type(self):
+        hw_types = self._get_hw_type_map()
+        unsupported = []
+        for hw_type in self.enabled_hw_types:
+            if hw_types.get(hw_type, None) is None:
+                unsupported.append(hw_type)
+        if len(unsupported) > 0:
+            raise ValueError(
+                'hardware type(s) %s not supported at '
+                'this time' % ", ".join(unsupported))
+
     @property
     def enabled_network_interfaces(self):
         network_interfaces = self.config.get(
             'enabled-network-interfaces', "").replace(" ", "")
         return network_interfaces.split(",")
+
+    @property
+    def enabled_hw_types(self):
+        hw_types = self.config.get(
+            'enabled-hw-types', "ipmi").replace(" ", "")
+        return hw_types.split(",")
 
     @property
     def enabled_deploy_interfaces(self):
@@ -231,25 +403,32 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         try:
             self._validate_network_interfaces(self.enabled_network_interfaces)
         except Exception as err:
-            msg = ("invalid enabled-network-interfaces config: %s" % err)
+            msg = ("invalid enabled-network-interfaces config, %s" % err)
             return ('blocked', msg)
 
         try:
             self._validate_default_net_interface()
         except Exception as err:
-            msg = ("invalid default-network-interface config: %s" % err)
+            msg = ("invalid default-network-interface config, %s" % err)
             return ('blocked', msg)
 
         try:
             self._validate_deploy_interfaces(
                 self.enabled_deploy_interfaces)
         except Exception as err:
-            msg = ("invalid enabled-deploy-interfaces config: %s" % err)
+            msg = ("invalid enabled-deploy-interfaces config, %s" % err)
             return ('blocked', msg)
 
         try:
             self._validate_default_deploy_interface()
         except Exception as err:
-            msg = ("invalid default-deploy-interface config: %s" % err)
+            msg = ("invalid default-deploy-interface config, %s" % err)
             return ('blocked', msg)
+
+        try:
+            self._validate_enabled_hw_type()
+        except Exception as err:
+            msg = ("invalid enabled-hw-types config, %s" % err)
+            return ('blocked', msg)
+
         return (None, None)

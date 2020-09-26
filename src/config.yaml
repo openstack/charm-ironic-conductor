@@ -159,3 +159,12 @@ options:
 
       Note: Automated cleaning can be toggled on a per node basis, via node properties.
       Note: node cleaning may take a long time, especially if secure erase is enabled.
+  enabled-hw-types:
+    default: "ipmi"
+    type: string
+    description: |
+      Comma separated list of hardware types to enable.
+      Valid options are:
+        * ipmi
+        * redfish
+        * idrac

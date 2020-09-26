@@ -7,3 +7,4 @@ python-glanceclient
 python-swiftclient
 python-keystoneclient
 zipp < 2.0.0
+importlib-metadata>=2.0

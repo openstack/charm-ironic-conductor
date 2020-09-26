@@ -5,10 +5,10 @@ includes:
   - interface:rabbitmq
   - interface:keystone-credentials
   - interface:ironic-api
-repo: https://github.com/gabriel-samfira/charm-ironic-conductor
+repo: https://opendev.org/openstack/charm-ironic-conductor.git
 options:
   basic:
     use_venv: true
     include_system_packages: False
-    packages: [ 'libffi-dev', 'libssl-dev', 'libpython3.6-dev' ]
+    packages: [ 'libffi-dev', 'libssl-dev', 'libpython3-dev' ]
 

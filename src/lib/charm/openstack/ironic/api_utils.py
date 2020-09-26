@@ -6,8 +6,10 @@ import glanceclient
 import swiftclient
 import keystoneclient
 
+SYSTEM_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
 
-def create_keystone_session(keystone, verify=True):
+
+def create_keystone_session(keystone):
     plugin_name = "password"
     username = keystone.credentials_username()
     password = keystone.credentials_password()
@@ -41,17 +43,17 @@ def create_keystone_session(keystone, verify=True):
 
     loader = loading.get_plugin_loader(plugin_name)
     auth = loader.load_from_options(**plugin_args)
-    return ks_session.Session(auth=auth, verify=verify)
+    return ks_session.Session(auth=auth, verify=SYSTEM_CA_BUNDLE)
 
 
 class OSClients(object):
 
-    def __init__(self, session, cacert=None):
+    def __init__(self, session):
         self._session = session
         self._img_cli = glanceclient.Client(
             session=self._session, version=2)
         self._obj_cli = swiftclient.Connection(
-            session=self._session, cacert=cacert)
+            session=self._session, cacert=SYSTEM_CA_BUNDLE)
         self._ks = keystoneclient.v3.Client(
             session=session)
         self._stores = None
