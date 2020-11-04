@@ -1,12 +1,16 @@
+# NOTE(lourot): this is on purpose, so that some tests like
+# IronicTest.test_910_pause_resume designed to address ironic-api keep working
+# here:
 charm_name: ironic-api
+
 gate_bundles:
+- groovy-victoria
+- focal-victoria
 - focal-ussuri
 - bionic-train
 - bionic-ussuri
 smoke_bundles:
 - bionic-ussuri
-dev_bundles:
-- focal-victoria
 target_deploy_status:
   vault:
     workload-status: blocked
@@ -27,3 +31,6 @@ configure:
 - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
 tests:
 - zaza.openstack.charm_tests.ironic.tests.IronicTest
+tests_options:
+  force_deploy:
+    - groovy-victoria
