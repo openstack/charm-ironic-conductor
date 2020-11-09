@@ -15,6 +15,7 @@ tags:
 series:
   - bionic
   - focal
+  - groovy
 extra-bindings:
   deployment:
   cleaning:
