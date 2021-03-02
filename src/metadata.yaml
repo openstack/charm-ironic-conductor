@@ -10,12 +10,13 @@ description: |
   to provision and turn on/off machines, but Ironic also supports
   vendor-specific plugins which may implement additional functionality.
 tags:
-  - openstack
-  - baremetal
+- openstack
+- baremetal
 series:
-  - bionic
-  - focal
-  - groovy
+- bionic
+- focal
+- groovy
+- hirsute
 extra-bindings:
   deployment:
   cleaning:
