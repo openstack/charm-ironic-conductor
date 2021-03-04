@@ -5,12 +5,18 @@ charm_name: ironic-api
 
 gate_bundles:
 - groovy-victoria
+- focal-wallaby
 - focal-victoria
 - focal-ussuri
 - bionic-train
 - bionic-ussuri
+
+dev_bundles:
+- hirsute-wallaby
+
 smoke_bundles:
-- bionic-ussuri
+- focal-ussuri
+
 target_deploy_status:
   vault:
     workload-status: blocked
@@ -18,6 +24,7 @@ target_deploy_status:
   ironic-conductor:
     workload-status: blocked
     workload-status-message: invalid enabled-deploy-interfaces config
+
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
 - zaza.openstack.charm_tests.ironic.setup.set_temp_url_secret
@@ -29,8 +36,10 @@ configure:
 # call to create that flat network
 #- zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
 - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
+
 tests:
 - zaza.openstack.charm_tests.ironic.tests.IronicTest
+
 tests_options:
   force_deploy:
-    - groovy-victoria
+    - hirsute-wallaby
