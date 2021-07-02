@@ -13,6 +13,12 @@ password = {{ identity_credentials.credentials_password }}
 # Project name to scope to (string value)
 project_name = {{identity_credentials.credentials_project}}
 
+# By default, the valid_interfaces are set to: internal,public
+# which causes the internal endpoints to be used first. Be more
+# explicit to match the charm option
+{% if not options.use_internal_endpoints -%}
+valid_interfaces = public,internal
+{% endif -%}
 
 {% if identity_credentials.credentials_project_domain_name -%}
 project_domain_name = {{ identity_credentials.credentials_project_domain_name }}
