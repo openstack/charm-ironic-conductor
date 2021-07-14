@@ -20,10 +20,10 @@ smoke_bundles:
 target_deploy_status:
   vault:
     workload-status: blocked
-    workload-status-message: Vault needs to be initialized
+    workload-status-message-prefix: Vault needs to be initialized
   ironic-conductor:
     workload-status: blocked
-    workload-status-message: invalid enabled-deploy-interfaces config
+    workload-status-message-prefix: invalid enabled-deploy-interfaces config
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize

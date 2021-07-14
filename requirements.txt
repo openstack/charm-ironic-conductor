@@ -24,3 +24,6 @@ simplejson
 # requirements.txt
 importlib-metadata<3.0.0; python_version < '3.6'
 importlib-resources<3.0.0; python_version < '3.6'
+
+# Workround CFFI build failure on python 3.5
+cffi<1.14.6

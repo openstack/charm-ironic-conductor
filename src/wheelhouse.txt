@@ -7,7 +7,15 @@ python-glanceclient
 python-swiftclient
 python-keystoneclient
 zipp < 2.0.0
-importlib-metadata>=2.0
+# cryptography 3.4 introduces a requirement for rust code in the module.  As it has to be compiled
+# on the machine during install, this breaks installs.  Instead pin to <3.4 until a solution can be
+# found that doesn't require compiling on the target machine.
+# LP: #1915171
+cryptography<3.4
+pyrsistent<0.18.0
+
+importlib-metadata<3.0.0
+importlib-resources<3.0.0
 
 git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
 

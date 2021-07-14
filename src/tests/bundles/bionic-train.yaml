@@ -11,8 +11,6 @@ relations:
   - keystone
 - - neutron-ironic-agent
   - neutron-api
-- - neutron-openvswitch
-  - neutron-api
 - - ironic-api:amqp
   - rabbitmq-server:amqp
 - - ironic-api
@@ -235,11 +233,6 @@ services:
       disable-secure-erase: true
       use-ipxe: true
       enabled-network-interfaces: "flat, noop"
-  neutron-openvswitch:
-    charm: cs:~openstack-charmers-next/neutron-openvswitch
-    num_units: 0
-    options:
-      bridge-mappings: physnet1:br-ex
   neutron-ironic-agent:
     charm: cs:~openstack-charmers-next/neutron-api-plugin-ironic
     num_units: 0
