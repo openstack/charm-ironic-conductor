@@ -1,0 +1,2 @@
+[ipmi]
+use_ipmitool_retries = {{ options.use_ipmitool_retries }}

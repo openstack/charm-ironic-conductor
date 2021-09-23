@@ -172,3 +172,9 @@ options:
         * ipmi
         * redfish
         * idrac
+  use-ipmitool-retries:
+    type: boolean
+    default: False
+    description: |
+      Use ipmitool to do the retries by passing relevant parameters. By default the option
+      is set to False and in this case Ironic will do the retries by re-running ipmi commands.
