@@ -4,8 +4,12 @@
     check:
       jobs:
       - charm-build
+      - impish-xena:
+          voting: false
       - hirsute-wallaby
       - groovy-victoria
+      - focal-xena:
+          voting: false
       - focal-wallaby
       - focal-victoria
       - focal-ussuri
