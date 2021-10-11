@@ -113,7 +113,7 @@ relations:
   - hacluster-ironic
 services:
   cinder:
-    charm: cs:~openstack-charmers-next/cinder
+    charm: cs:~openstack-charmers/cinder
     num_units: 1
     constraints: mem=2G
     options:
@@ -123,55 +123,63 @@ services:
       worker-multiplier: 0.25
     storage:
       block-devices: cinder,50G
+    channel: candidate
   ceph-radosgw:
-    charm: cs:~openstack-charmers-next/ceph-radosgw
+    charm: cs:~openstack-charmers/ceph-radosgw
     num_units: 1
     constraints: mem=2G
     options:
       source: *source
       namespace-tenants: True
+    channel: candidate
   ceph-mon:
-    charm: cs:~openstack-charmers-next/ceph-mon
+    charm: cs:~openstack-charmers/ceph-mon
     num_units: 3
     constraints: mem=2G
     options:
       expected-osd-count: 3
       source: *source
+    channel: candidate
   ceph-osd:
-    charm: cs:~openstack-charmers-next/ceph-osd
+    charm: cs:~openstack-charmers/ceph-osd
     num_units: 3
     constraints: mem=2G
     options:
       source: *source
     storage:
       osd-devices: 'cinder,30G'
+    channel: candidate
   glance:
-    charm: cs:~openstack-charmers-next/glance
+    charm: cs:~openstack-charmers/glance
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: candidate
   keystone:
-    charm: cs:~openstack-charmers-next/keystone
+    charm: cs:~openstack-charmers/keystone
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: candidate
   mysql:
-    charm: cs:~openstack-charmers-next/percona-cluster
+    charm: cs:~openstack-charmers/percona-cluster
     num_units: 1
     constraints: mem=4G
     options:
       innodb-buffer-pool-size: 256M
       max-connections: 1000
       performance-schema: true
+    channel: candidate
   hacluster-ironic:
-    charm: cs:~openstack-charmers-next/hacluster
+    charm: cs:~openstack-charmers/hacluster
     num_units: 0
+    channel: candidate
   neutron-api:
-    charm: cs:~openstack-charmers-next/neutron-api
+    charm: cs:~openstack-charmers/neutron-api
     num_units: 3
     constraints: mem=2G
     options:
@@ -180,8 +188,9 @@ services:
       openstack-origin: *source
       manage-neutron-plugin-legacy-mode: false
       worker-multiplier: 0.25
+    channel: candidate
   neutron-gateway:
-    charm: cs:~openstack-charmers-next/neutron-gateway
+    charm: cs:~openstack-charmers/neutron-gateway
     num_units: 1
     constraints: mem=2G
     options:
@@ -189,16 +198,18 @@ services:
       enable-isolated-metadata: true
       enable-metadata-network: true
       bridge-mappings: physnet1:br-ex
+    channel: candidate
   nova-cloud-controller:
-    charm: cs:~openstack-charmers-next/nova-cloud-controller
+    charm: cs:~openstack-charmers/nova-cloud-controller
     num_units: 1
     constraints: mem=2G
     options:
       network-manager: Neutron
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: candidate
   nova-ironic:
-    charm: cs:~openstack-charmers-next/nova-compute
+    charm: cs:~openstack-charmers/nova-compute
     num_units: 1
     constraints: mem=2G
     options:
@@ -206,23 +217,27 @@ services:
       enable-resize: false
       openstack-origin: *source
       virt-type: ironic
+    channel: candidate
   placement:
-    charm: cs:~openstack-charmers-next/placement
+    charm: cs:~openstack-charmers/placement
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: candidate
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/rabbitmq-server
+    charm: cs:~openstack-charmers/rabbitmq-server
     num_units: 1
     constraints: mem=2G
+    channel: candidate
   ironic-api:
-    charm: cs:~openstack-charmers-next/ironic-api
+    charm: cs:~openstack-charmers/ironic-api
     num_units: 3
     constraints: mem=2G
     options:
       openstack-origin: *source
+    channel: candidate
   ironic-conductor:
     charm: ../../../ironic-conductor
     num_units: 1
@@ -234,10 +249,12 @@ services:
       use-ipxe: true
       enabled-network-interfaces: "flat, noop"
   neutron-ironic-agent:
-    charm: cs:~openstack-charmers-next/neutron-api-plugin-ironic
+    charm: cs:~openstack-charmers/neutron-api-plugin-ironic
     num_units: 0
     options:
       openstack-origin: *source
+    channel: candidate
   vault:
-    charm: cs:~openstack-charmers-next/vault
+    charm: cs:~openstack-charmers/vault
     num_units: 1
+    channel: candidate
