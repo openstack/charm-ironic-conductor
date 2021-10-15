@@ -92,7 +92,7 @@
       "type": "python_module",
       "package": "keystoneauth1",
       "vcs": null,
-      "version": "4.4.0"
+      "version": "4.1.0"
     },
     {
       "type": "python_module",
@@ -104,7 +104,7 @@
       "type": "python_module",
       "package": "debtcollector",
       "vcs": null,
-      "version": "2.3.0"
+      "version": "1.21.0"
     },
     {
       "type": "python_module",
@@ -116,13 +116,13 @@
       "type": "python_module",
       "package": "packaging",
       "vcs": null,
-      "version": "21.0"
+      "version": "20.9"
     },
     {
       "type": "python_module",
       "package": "cryptography",
       "vcs": null,
-      "version": "3.3.2"
+      "version": "2.3.1"
     },
     {
       "type": "python_module",
@@ -152,7 +152,7 @@
       "type": "python_module",
       "package": "stevedore",
       "vcs": null,
-      "version": "3.4.0"
+      "version": "1.30.1"
     },
     {
       "type": "python_module",
@@ -218,7 +218,7 @@
       "type": "python_module",
       "package": "python-glanceclient",
       "vcs": null,
-      "version": "3.5.0"
+      "version": "2.16.0"
     },
     {
       "type": "python_module",
@@ -230,7 +230,7 @@
       "type": "python_module",
       "package": "requests",
       "vcs": null,
-      "version": "2.26.0"
+      "version": "2.25.1"
     },
     {
       "type": "python_module",
@@ -260,7 +260,7 @@
       "type": "python_module",
       "package": "python-swiftclient",
       "vcs": null,
-      "version": "3.12.0"
+      "version": "3.8.0"
     },
     {
       "type": "python_module",
@@ -304,7 +304,7 @@
       "type": "python_module",
       "package": "idna",
       "vcs": null,
-      "version": "3.2"
+      "version": "2.10"
     },
     {
       "type": "python_module",
@@ -322,7 +322,7 @@
       "type": "python_module",
       "package": "oslo.i18n",
       "vcs": null,
-      "version": "5.1.0"
+      "version": "3.23.1"
     },
     {
       "type": "python_module",
@@ -334,7 +334,7 @@
       "type": "python_module",
       "package": "python-keystoneclient",
       "vcs": null,
-      "version": "4.3.0"
+      "version": "3.19.1"
     },
     {
       "type": "python_module",
@@ -366,7 +366,7 @@
       "type": "python_module",
       "package": "prettytable",
       "vcs": null,
-      "version": "2.2.1"
+      "version": "0.7.2"
     },
     {
       "type": "python_module",
@@ -396,7 +396,7 @@
       "type": "python_module",
       "package": "pyOpenSSL",
       "vcs": null,
-      "version": "21.0.0"
+      "version": "19.0.0"
     },
     {
       "type": "python_module",
@@ -414,7 +414,7 @@
       "type": "python_module",
       "package": "oslo.utils",
       "vcs": null,
-      "version": "4.10.0"
+      "version": "3.41.0"
     },
     {
       "type": "python_module",
@@ -426,13 +426,13 @@
       "type": "python_module",
       "package": "oslo.serialization",
       "vcs": null,
-      "version": "4.2.0"
+      "version": "2.29.1"
     },
     {
       "type": "python_module",
       "package": "oslo.config",
       "vcs": null,
-      "version": "8.7.1"
+      "version": "6.8.2"
     }
   ]
 }

@@ -1,11 +1,11 @@
 # Several dependencies now require setuptools-scm>=3.0,<=3.4.1 which requires toml
 setuptools-scm>=3.0,<=3.4.1
 toml
-keystoneauth1
+keystoneauth1 < 4.2  # py35 compatability
 pbr
-python-glanceclient
-python-swiftclient
-python-keystoneclient
+python-glanceclient < 2.17.0  # py35 compatability
+python-swiftclient < 3.8.1  # py35 compatability
+python-keystoneclient < 3.20.0 # py35 comptability
 zipp < 2.0.0
 # cryptography 3.4 introduces a requirement for rust code in the module.  As it has to be compiled
 # on the machine during install, this breaks installs.  Instead pin to <3.4 until a solution can be
