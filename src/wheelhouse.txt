@@ -13,6 +13,7 @@ zipp < 2.0.0
 # LP: #1915171
 cryptography<3.4
 pyrsistent<0.18.0
+iso8601<1.0.0
 
 importlib-metadata<3.0.0
 importlib-resources<3.0.0

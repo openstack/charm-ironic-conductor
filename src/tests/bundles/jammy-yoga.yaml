@@ -1,6 +1,6 @@
 options:
   source: &source distro
-series: groovy
+series: jammy
 local_overlay_enabled: false
 relations:
 - - nova-ironic
