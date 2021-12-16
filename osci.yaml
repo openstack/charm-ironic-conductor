@@ -2,18 +2,8 @@
     templates:
       - charm-unit-jobs-py38
       - charm-unit-jobs-py39
-      # Non-voting due to:
-      # https://bugs.launchpad.net/charm-ironic-conductor/+bug/1952140
-      # - charm-xena-functional-jobs
+      - charm-xena-functional-jobs
       - charm-yoga-functional-jobs
-    check:
-      jobs:
-        # Non-voting due to:
-        # https://bugs.launchpad.net/charm-ironic-conductor/+bug/1952140
-        - focal-xena:
-            voting: false
-        - impish-xena:
-            voting: false
     vars:
       needs_charm_build: true
       charm_build_name: ironic-conductor

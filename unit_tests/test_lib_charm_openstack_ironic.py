@@ -13,13 +13,17 @@
 # limitations under the License.
 
 import mock
+from copy import deepcopy
 
 import charms_openstack.test_utils as test_utils
 import charms.leadership as leadership
 import charmhelpers.core.hookenv as hookenv
 import charms.reactive as reactive
 
-from charmhelpers.contrib.openstack.utils import os_release
+from charmhelpers.contrib.openstack.utils import (
+    CompareOpenStackReleases,
+    os_release,
+)
 
 from charm.openstack.ironic import ironic
 from charm.openstack.ironic import controller_utils as ctrl_util
@@ -272,7 +276,7 @@ class TestIronicCharm(test_utils.PatchHelper):
 
         target = ironic.IronicConductorCharm()
         target._setup_pxe_config(self.mocked_pxe_cfg)
-        expected_pkgs = ironic.PACKAGES + ["fakepkg1", "fakepkg2"]
+        expected_pkgs = deepcopy(ironic.PACKAGES) + ["fakepkg1", "fakepkg2"]
 
         expected_cfg = {
             'tftpboot': ctrl_util.PXEBootBase.TFTP_ROOT,
@@ -295,12 +299,22 @@ class TestIronicCharm(test_utils.PatchHelper):
             'default-deploy-interface': 'fake_deploy'}
 
         self.assertEqual(
-            target.packages.sort(),
-            expected_pkgs.sort())
+            sorted(target.packages),
+            sorted(expected_pkgs))
         self.assertEqual(target.config, expected_cfg)
         self.assertEqual(
             target.restart_map.get("fake_config", []), ["fake_svc"])
         self.assertTrue("fakehttpd" in target.services)
+
+    def test_packages_xena(self):
+        reactive.is_flag_set.side_effect = [False, False, False]
+        target = ironic.IronicConductorXenaCharm()
+        expected_pkgs = deepcopy(ironic.PACKAGES) + ["fakepkg1", "fakepkg2"]
+        expected_pkgs.remove("open-iscsi")
+
+        self.assertEqual(
+            sorted(target.packages),
+            sorted(expected_pkgs))
 
     def test_validate_network_interfaces(self):
         target = ironic.IronicConductorCharm()
@@ -311,6 +325,7 @@ class TestIronicCharm(test_utils.PatchHelper):
 
     def test_validate_deploy_interfaces(self):
         target = ironic.IronicConductorCharm()
+        CompareOpenStackReleases.return_value = 'wallaby'
         with self.assertRaises(ValueError) as err:
             target._validate_deploy_interfaces(["bogus"])
 
@@ -322,11 +337,27 @@ class TestIronicCharm(test_utils.PatchHelper):
             target._validate_deploy_interfaces(["direct"]))
         self.assertEqual(str(err.exception), expected_msg)
 
+    def test_validate_deploy_interfaces_xena(self):
+        reactive.is_flag_set.side_effect = [False, False, False]
+        target = ironic.IronicConductorXenaCharm()
+        CompareOpenStackReleases.return_value = 'xena'
+        with self.assertRaises(ValueError) as err:
+            target._validate_deploy_interfaces(["bogus"])
+
+        expected_msg = (
+            'Deploy interface bogus is not valid.'
+            ' Valid interfaces are: direct')
+
+        self.assertIsNone(
+            target._validate_deploy_interfaces(["direct"]))
+        self.assertEqual(str(err.exception), expected_msg)
+
     def test_validate_deploy_interfaces_tmp_secret(self):
         # leadership.set.temp_url_secret is not set, and "direct"
         # boot method is enabled. Validate will fail, until
         # set-temp-url-secret action is run
         reactive.is_flag_set.side_effect = [False, True]
+        CompareOpenStackReleases.return_value = 'wallaby'
         target = ironic.IronicConductorCharm()
         with self.assertRaises(ValueError) as err:
             target._validate_deploy_interfaces(["direct"])
@@ -381,6 +412,7 @@ class TestIronicCharm(test_utils.PatchHelper):
             "enabled-deploy-interfaces": "direct, iscsi",
             "default-network-interface": "flat",
             "enabled-network-interfaces": "neutron, flat, noop"}
+        CompareOpenStackReleases.return_value = 'wallaby'
         target = ironic.IronicConductorCharm()
         self.assertEqual(target.custom_assess_status_check(), (None, None))
 
@@ -404,6 +436,7 @@ class TestIronicCharm(test_utils.PatchHelper):
             "enabled-deploy-interfaces": "bogus, iscsi",
             "default-network-interface": "flat",
             "enabled-network-interfaces": "neutron, flat, noop"}
+        CompareOpenStackReleases.return_value = 'wallaby'
         target = ironic.IronicConductorCharm()
         expected_status = (
             'blocked',
@@ -433,6 +466,7 @@ class TestIronicCharm(test_utils.PatchHelper):
             "enabled-deploy-interfaces": "direct, iscsi",
             "default-network-interface": "flat",
             "enabled-network-interfaces": "neutron, flat, noop"}
+        CompareOpenStackReleases.return_value = 'wallaby'
         target = ironic.IronicConductorCharm()
         expected_status = (
             'blocked',
