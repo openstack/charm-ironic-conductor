@@ -1,13 +1,11 @@
 - project:
     templates:
-      - charm-yoga-unit-jobs
-      - charm-yoga-functional-jobs
+      - charm-unit-jobs-py38
+      - charm-unit-jobs-py39
       # Non-voting due to:
       # https://bugs.launchpad.net/charm-ironic-conductor/+bug/1952140
       # - charm-xena-functional-jobs
-      - charm-wallaby-functional-jobs
-      - charm-victoria-functional-jobs
-      - charm-ussuri-functional-jobs
+      - charm-yoga-functional-jobs
     check:
       jobs:
         # Non-voting due to:

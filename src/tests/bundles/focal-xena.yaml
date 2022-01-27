@@ -131,31 +131,41 @@ relations:
   - hacluster-ironic
 services:
   nova-cloud-controller-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   keystone-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   glance-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   neutron-api-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   placement-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   vault-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   cinder-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   ironic-api-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   ironic-conductor-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: ch:mysql-router
+    channel: latest/edge
   mysql-innodb-cluster:
-    charm: cs:~openstack-charmers-next/mysql-innodb-cluster
+    charm: ch:mysql-innodb-cluster
     num_units: 3
     constraints: mem=4G
     options:
       source: *source
+    channel: latest/edge
   cinder:
-    charm: cs:~openstack-charmers-next/cinder
+    charm: ch:cinder
     num_units: 1
     constraints: mem=2G
     options:
@@ -165,44 +175,50 @@ services:
       worker-multiplier: 0.25
     storage:
       block-devices: cinder,50G
+    channel: latest/edge
   ceph-radosgw:
-    charm: cs:~openstack-charmers-next/ceph-radosgw
+    charm: ch:ceph-radosgw
     num_units: 1
     constraints: mem=2G
     options:
       source: *source
       namespace-tenants: True
+    channel: latest/edge
   ceph-mon:
-    charm: cs:~openstack-charmers-next/ceph-mon
+    charm: ch:ceph-mon
     num_units: 3
     constraints: mem=2G
     options:
       expected-osd-count: 3
       source: *source
+    channel: latest/edge
   ceph-osd:
-    charm: cs:~openstack-charmers-next/ceph-osd
+    charm: ch:ceph-osd
     num_units: 3
     constraints: mem=2G
     options:
       source: *source
     storage:
       osd-devices: 'cinder,30G'
+    channel: latest/edge
   glance:
-    charm: cs:~openstack-charmers-next/glance
+    charm: ch:glance
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: latest/edge
   keystone:
-    charm: cs:~openstack-charmers-next/keystone
+    charm: ch:keystone
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: latest/edge
   neutron-api:
-    charm: cs:~openstack-charmers-next/neutron-api
+    charm: ch:neutron-api
     num_units: 1
     constraints: mem=2G
     options:
@@ -211,8 +227,9 @@ services:
       openstack-origin: *source
       manage-neutron-plugin-legacy-mode: false
       worker-multiplier: 0.25
+    channel: latest/edge
   neutron-gateway:
-    charm: cs:~openstack-charmers-next/neutron-gateway
+    charm: ch:neutron-gateway
     num_units: 1
     constraints: mem=2G
     options:
@@ -220,16 +237,18 @@ services:
       enable-isolated-metadata: true
       enable-metadata-network: true
       bridge-mappings: physnet1:br-ex
+    channel: latest/edge
   nova-cloud-controller:
-    charm: cs:~openstack-charmers-next/nova-cloud-controller
+    charm: ch:nova-cloud-controller
     num_units: 1
     constraints: mem=2G
     options:
       network-manager: Neutron
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: latest/edge
   nova-ironic:
-    charm: cs:~openstack-charmers-next/nova-compute
+    charm: ch:nova-compute
     num_units: 1
     constraints: mem=2G
     options:
@@ -237,26 +256,31 @@ services:
       enable-resize: false
       openstack-origin: *source
       virt-type: ironic
+    channel: latest/edge
   placement:
-    charm: cs:~openstack-charmers-next/placement
+    charm: ch:placement
     num_units: 1
     constraints: mem=2G
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
+    channel: latest/edge
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/rabbitmq-server
+    charm: ch:rabbitmq-server
     num_units: 1
     constraints: mem=2G
+    channel: latest/edge
   hacluster-ironic:
-    charm: cs:~openstack-charmers-next/hacluster
+    charm: ch:hacluster
     num_units: 0
+    channel: latest/edge
   ironic-api:
-    charm: cs:~openstack-charmers-next/ironic-api
+    charm: ch:ironic-api
     num_units: 3
     constraints: mem=2G
     options:
       openstack-origin: *source
+    channel: latest/edge
   ironic-conductor:
     charm: ../../../ironic-conductor
     num_units: 1
@@ -268,10 +292,12 @@ services:
       use-ipxe: true
       enabled-network-interfaces: "flat, noop"
   neutron-ironic-agent:
-    charm: cs:~openstack-charmers-next/neutron-api-plugin-ironic
+    charm: ch:neutron-api-plugin-ironic
     num_units: 0
     options:
       openstack-origin: *source
+    channel: latest/edge
   vault:
-    charm: cs:~openstack-charmers-next/vault
+    charm: ch:vault
     num_units: 1
+    channel: latest/edge
