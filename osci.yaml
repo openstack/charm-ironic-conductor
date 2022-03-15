@@ -1,16 +1,11 @@
 - project:
     templates:
-      - charm-unit-jobs
+      - charm-unit-jobs-py38
     check:
       jobs:
-      - charm-build
-      - hirsute-wallaby
-      - groovy-victoria
       - focal-wallaby
-      - focal-victoria
-      - focal-ussuri
-      - bionic-train
-      - bionic-ussuri
+      - focal-xena
     vars:
       needs_charm_build: true
       charm_build_name: ironic-conductor
+      build_type: charmcraft

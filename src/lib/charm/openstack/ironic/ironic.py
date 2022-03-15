@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import collections
 import os
+from copy import deepcopy
 
 import charms_openstack.charm
 import charms_openstack.adapters
@@ -10,7 +11,10 @@ from charms_openstack.adapters import (
     DatabaseRelationAdapter,
     OpenStackRelationAdapters,
 )
-from charmhelpers.contrib.openstack.utils import os_release
+from charmhelpers.contrib.openstack.utils import (
+    CompareOpenStackReleases,
+    os_release,
+)
 
 import charm.openstack.ironic.controller_utils as controller_utils
 import charms_openstack.adapters as adapters
@@ -182,7 +186,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     abstract_class = False
     release = 'train'
     name = 'ironic'
-    packages = PACKAGES
+    packages = deepcopy(PACKAGES)
     python_version = 3
 
     service_type = 'ironic'
@@ -348,6 +352,10 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
 
     def _validate_deploy_interfaces(self, interfaces):
         valid_interfaces = VALID_DEPLOY_INTERFACES
+        if (CompareOpenStackReleases(self.release) >= 'xena' and
+                "iscsi" in valid_interfaces):
+            valid_interfaces.remove("iscsi")
+
         has_secret = reactive.is_flag_set("leadership.set.temp_url_secret")
         for interface in interfaces:
             if interface not in valid_interfaces:
@@ -432,3 +440,9 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
             return ('blocked', msg)
 
         return (None, None)
+
+
+class IronicConductorXenaCharm(IronicConductorCharm):
+
+    release = 'xena'
+    packages = [p for p in deepcopy(PACKAGES) if p != "open-iscsi"]

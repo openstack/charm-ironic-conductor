@@ -1,6 +1,6 @@
 options:
   openstack-origin:
-    default: distro
+    default: cloud:focal-xena
     type: string
     description: |
       Repository from which to install. May be one of the following:
@@ -114,7 +114,7 @@ options:
       list of enabled-network-interfaces.
   enabled-deploy-interfaces:
     type: string
-    default: "direct, iscsi"
+    default: "direct"
     description: |
       Comma separated list of deploy interfaces to use.
       Valid options are:
@@ -132,6 +132,10 @@ options:
       Note: The iscsi deploy mode requires that ironic-conductor be deployed on a VM
       or a bare metal machine. That is because the iscsi kernel module is not namespaced,
       and the ironic-conductor will not be able to log into any iscsi target.
+
+      Note: The iscsi deploy interface is removed from the Ironic project in OpenStack
+      Xena. Support for the iscsi deploy interface is therefore removed from the charm
+      For OpenStack Xena and later releases.
   default-deploy-interface:
     type: string
     default: "direct"

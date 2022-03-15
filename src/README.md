@@ -27,7 +27,7 @@ There are a number of configuration parameters that greatly influence how the Ir
 The Ironic conductor charm currently supports two deployment interfaces:
 
   * direct
-  * iscsi
+  * iscsi (prior to OpenStack Xena)
 
 ### The iSCSI deployment interface
 
@@ -50,6 +50,11 @@ Cons:
     * Writing the disk data to the iSCSI target
     * Applying any post-write configuration
   * Requires more Ironic conductor units as the number of bare metal nodes increases
+
+Removal:
+
+  * The iSCSI deploy interface is removed from the ironic project in OpenStack Xena. Support for the iscsi deploy interface is therefore removed from the charm for OpenStack Xena
+  and later releases.
 
 You can set this deployment interface by running the following commands:
 
