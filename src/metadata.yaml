@@ -14,7 +14,7 @@ tags:
 - baremetal
 series:
 - focal
-- impish
+- jammy
 extra-bindings:
   deployment:
   cleaning:

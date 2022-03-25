@@ -3,7 +3,7 @@ local_overlay_enabled: False
 options:
   source: &source cloud:focal-xena
 series: focal
-local_overlay_enabled: false
+
 relations:
 - - nova-ironic
   - ironic-api
