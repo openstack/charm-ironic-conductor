@@ -3,7 +3,6 @@ local_overlay_enabled: False
 options:
   source: &source cloud:focal-yoga
 series: focal
-local_overlay_enabled: false
 relations:
 - - nova-ironic
   - ironic-api
