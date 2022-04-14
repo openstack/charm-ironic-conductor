@@ -224,7 +224,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     def __init__(self, **kw):
         super().__init__(**kw)
         self.pxe_config = controller_utils.get_pxe_config_class(
-            self.config)
+            self.config, os_release(self.release_pkg))
         self._setup_pxe_config(self.pxe_config)
         self._setup_power_adapter_config()
         self._configure_defaults()
@@ -308,6 +308,8 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         self.config["ironic_user"] = cfg.IRONIC_USER
         self.config["ironic_group"] = cfg.IRONIC_GROUP
         self.restart_map.update(cfg.get_restart_map())
+        self.permission_override_map.update(
+            cfg.get_permission_override_map())
         if cfg.HTTPD_SERVICE_NAME not in self.services:
             self.services.append(
                 cfg.HTTPD_SERVICE_NAME)

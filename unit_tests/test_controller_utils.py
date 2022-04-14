@@ -21,18 +21,31 @@ import charmhelpers.core.host as ch_host
 
 import charm.openstack.ironic.controller_utils as controller_utils
 
+from charmhelpers.contrib.openstack.utils import (
+    CompareOpenStackReleases,
+)
+
 
 class TestGetPXEBootClass(test_utils.PatchHelper):
 
     def test_get_pxe_config_class(self):
+        CompareOpenStackReleases.return_value = 'xena'
         self.patch_object(
             ch_host, 'get_distrib_codename')
         self.get_distrib_codename.return_value = "focal"
         charm_config = {}
-        pxe_class = controller_utils.get_pxe_config_class(charm_config)
+        pxe_class = controller_utils.get_pxe_config_class(charm_config, 'xena')
         self.assertTrue(
             isinstance(
                 pxe_class, controller_utils.PXEBootBase))
+        self.assertFalse(
+            isinstance(
+                pxe_class, controller_utils.PXEBootYoga))
+        CompareOpenStackReleases.return_value = 'yoga'
+        pxe_class = controller_utils.get_pxe_config_class(charm_config, 'yoga')
+        self.assertTrue(
+            isinstance(
+                pxe_class, controller_utils.PXEBootYoga))
 
 
 class TestPXEBootBase(test_utils.PatchHelper):

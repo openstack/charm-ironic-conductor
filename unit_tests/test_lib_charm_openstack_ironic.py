@@ -189,6 +189,7 @@ class TestIronicCharm(test_utils.PatchHelper):
             expected)
 
     def test_get_amqp_credentials(self):
+        os_release.return_value = "yoga"
         cfg_data = {
             "rabbit-user": "ironic",
             "rabbit-vhost": "openstack",
@@ -196,12 +197,13 @@ class TestIronicCharm(test_utils.PatchHelper):
 
         hookenv.config.return_value = cfg_data
         target = ironic.IronicConductorCharm()
-        self.get_pxe_config_class.assert_called_with(cfg_data)
+        self.get_pxe_config_class.assert_called_with(cfg_data, 'yoga')
 
         result = target.get_amqp_credentials()
         self.assertEqual(result, ('ironic', 'openstack'))
 
     def test_get_database_setup(self):
+        os_release.return_value = "yoga"
         cfg_data = {
             "database-user": "ironic",
             "database": "ironicdb",
@@ -209,7 +211,7 @@ class TestIronicCharm(test_utils.PatchHelper):
 
         hookenv.config.return_value = cfg_data
         target = ironic.IronicConductorCharm()
-        self.get_pxe_config_class.assert_called_with(cfg_data)
+        self.get_pxe_config_class.assert_called_with(cfg_data, 'yoga')
 
         result = target.get_database_setup()
         self.assertEqual(
@@ -219,22 +221,24 @@ class TestIronicCharm(test_utils.PatchHelper):
                 "username": cfg_data["database-user"]}])
 
     def test_enabled_network_interfaces(self):
+        os_release.return_value = "yoga"
         cfg_data = {
             "enabled-network-interfaces": "fake, fake2"}
         hookenv.config.return_value = cfg_data
         target = ironic.IronicConductorCharm()
-        self.get_pxe_config_class.assert_called_with(cfg_data)
+        self.get_pxe_config_class.assert_called_with(cfg_data, 'yoga')
 
         self.assertEqual(
             target.enabled_network_interfaces,
             ["fake", "fake2"])
 
     def test_enabled_deploy_interfaces(self):
+        os_release.return_value = "yoga"
         cfg_data = {
             "enabled-deploy-interfaces": "fake, fake2"}
         hookenv.config.return_value = cfg_data
         target = ironic.IronicConductorCharm()
-        self.get_pxe_config_class.assert_called_with(cfg_data)
+        self.get_pxe_config_class.assert_called_with(cfg_data, 'yoga')
 
         self.assertEqual(
             target.enabled_deploy_interfaces,
