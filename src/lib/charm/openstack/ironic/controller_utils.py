@@ -2,6 +2,7 @@ import os
 import shutil
 
 import charmhelpers.core.host as ch_host
+import charmhelpers.contrib.openstack.utils as ch_utils
 
 
 _IRONIC_USER = "ironic"
@@ -55,6 +56,10 @@ class PXEBootBase(object):
             self.HTTP_SERVER_CONF: [self.HTTPD_SERVICE_NAME, ],
         }
 
+    def get_permission_override_map(self):
+        return {
+            self.GRUB_CFG: 0o660}
+
     def determine_packages(self):
         default_packages = (
             self.PACKAGES + self.TFTP_PACKAGES + self.HTTPD_PACKAGES)
@@ -88,9 +93,27 @@ class PXEBootBase(object):
             self.HTTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
 
 
-def get_pxe_config_class(charm_config):
+class PXEBootYoga(PXEBootBase):
+
+    def get_restart_map(self):
+        # self.GRUB_CFG is now managed by the ironic conductor service. Remove
+        # it from charm management
+        return {
+            self.TFTP_CONFIG: [self.TFTPD_SERVICE, ],
+            self.MAP_FILE: [self.TFTPD_SERVICE, ],
+            self.HTTP_SERVER_CONF: [self.HTTPD_SERVICE_NAME, ],
+        }
+
+
+def get_pxe_config_class(charm_config, release):
     # We may need to make slight adjustments to package names and/or
     # configuration files, based on the version of Ubuntu we are installing
     # on. This function serves as a factory which will return an instance
-    # of the proper class to the charm. For now we only have one class.
-    return PXEBootBase(charm_config)
+    # of the proper class to the charm.
+    cmp_os_release = ch_utils.CompareOpenStackReleases(
+        release
+    )
+    if cmp_os_release < 'yoga':
+        return PXEBootBase(charm_config)
+    else:
+        return PXEBootYoga(charm_config)
