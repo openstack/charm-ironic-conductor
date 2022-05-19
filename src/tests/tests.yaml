@@ -4,15 +4,10 @@
 charm_name: ironic-api
 
 gate_bundles:
-- groovy-victoria
-- focal-wallaby
 - focal-victoria
 - focal-ussuri
-- bionic-train
-- bionic-ussuri
 
 dev_bundles:
-- hirsute-wallaby
 
 smoke_bundles:
 - focal-ussuri
@@ -42,4 +37,3 @@ tests:
 
 tests_options:
   force_deploy:
-    - hirsute-wallaby
