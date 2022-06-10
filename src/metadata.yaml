@@ -13,8 +13,8 @@ tags:
 - openstack
 - baremetal
 series:
-- focal
 - jammy
+- kinetic
 extra-bindings:
   deployment:
   cleaning:
