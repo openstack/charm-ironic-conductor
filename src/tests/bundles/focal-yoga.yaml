@@ -133,38 +133,38 @@ relations:
 services:
   nova-cloud-controller-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   keystone-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   glance-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   neutron-api-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   placement-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   vault-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   cinder-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   ironic-api-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   ironic-conductor-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
     num_units: 3
     constraints: mem=4G
     options:
       source: *source
-    channel: latest/edge
+    channel: 8.0/edge
   cinder:
     charm: ch:cinder
     num_units: 1
@@ -176,7 +176,7 @@ services:
       worker-multiplier: 0.25
     storage:
       block-devices: cinder,50G
-    channel: latest/edge
+    channel: yoga/edge
   ceph-radosgw:
     charm: ch:ceph-radosgw
     num_units: 1
@@ -184,7 +184,7 @@ services:
     options:
       source: *source
       namespace-tenants: True
-    channel: latest/edge
+    channel: quincy/edge
   ceph-mon:
     charm: ch:ceph-mon
     num_units: 3
@@ -192,7 +192,7 @@ services:
     options:
       expected-osd-count: 3
       source: *source
-    channel: latest/edge
+    channel: quincy/edge
   ceph-osd:
     charm: ch:ceph-osd
     num_units: 3
@@ -201,7 +201,7 @@ services:
       source: *source
     storage:
       osd-devices: 'cinder,30G'
-    channel: latest/edge
+    channel: quincy/edge
   glance:
     charm: ch:glance
     num_units: 1
@@ -209,7 +209,7 @@ services:
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
-    channel: latest/edge
+    channel: yoga/edge
   keystone:
     charm: ch:keystone
     num_units: 1
@@ -217,7 +217,7 @@ services:
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
-    channel: latest/edge
+    channel: yoga/edge
   neutron-api:
     charm: ch:neutron-api
     num_units: 1
@@ -228,7 +228,7 @@ services:
       openstack-origin: *source
       manage-neutron-plugin-legacy-mode: false
       worker-multiplier: 0.25
-    channel: latest/edge
+    channel: yoga/edge
   neutron-gateway:
     charm: ch:neutron-gateway
     num_units: 1
@@ -238,7 +238,7 @@ services:
       enable-isolated-metadata: true
       enable-metadata-network: true
       bridge-mappings: physnet1:br-ex
-    channel: latest/edge
+    channel: yoga/edge
   nova-cloud-controller:
     charm: ch:nova-cloud-controller
     num_units: 1
@@ -247,7 +247,7 @@ services:
       network-manager: Neutron
       openstack-origin: *source
       worker-multiplier: 0.25
-    channel: latest/edge
+    channel: yoga/edge
   nova-ironic:
     charm: ch:nova-compute
     num_units: 1
@@ -257,7 +257,7 @@ services:
       enable-resize: false
       openstack-origin: *source
       virt-type: ironic
-    channel: latest/edge
+    channel: yoga/edge
   placement:
     charm: ch:placement
     num_units: 1
@@ -265,16 +265,16 @@ services:
     options:
       openstack-origin: *source
       worker-multiplier: 0.25
-    channel: latest/edge
+    channel: yoga/edge
   rabbitmq-server:
     charm: ch:rabbitmq-server
     num_units: 1
     constraints: mem=2G
-    channel: latest/edge
+    channel: 3.9/edge
   hacluster-ironic:
     charm: ch:hacluster
     num_units: 0
-    channel: latest/edge
+    channel: 2.4/edge
   ironic-api:
     charm: ch:openstack-charmers-next-ironic-api
     num_units: 3
@@ -301,4 +301,4 @@ services:
   vault:
     charm: ch:vault
     num_units: 1
-    channel: latest/edge
+    channel: 1.7/edge
