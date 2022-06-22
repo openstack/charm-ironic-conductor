@@ -4,18 +4,12 @@
 charm_name: ironic-api
 
 gate_bundles:
-- groovy-victoria
-- focal-wallaby
-- focal-victoria
-- focal-ussuri
 - bionic-train
-- bionic-ussuri
 
-dev_bundles:
-- hirsute-wallaby
+dev_bundles: []
 
 smoke_bundles:
-- focal-ussuri
+- bionic-train
 
 target_deploy_status:
   vault:
@@ -41,5 +35,4 @@ tests:
 - zaza.openstack.charm_tests.ironic.tests.IronicTest
 
 tests_options:
-  force_deploy:
-    - hirsute-wallaby
+  force_deploy: []

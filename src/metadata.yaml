@@ -14,10 +14,6 @@ tags:
 - baremetal
 series:
 - bionic
-- focal
-- groovy
-- hirsute
-- impish
 extra-bindings:
   deployment:
   cleaning:
