@@ -178,3 +178,37 @@ options:
     description: |
       Use ipmitool to do the retries by passing relevant parameters. By default the option
       is set to False and in this case Ironic will do the retries by re-running ipmi commands.
+  deploy-logs-collect:
+    default: "on_failure"
+    type: string
+    description: |
+      Defines the deployment-log collection behaviour.
+      Valid options are:
+        * on_failure (default): Retrieve deployment logs on deployment failure.
+        * always: Always collect logs even if deployment seccedded.
+        * never: Disable log collection
+  deploy-logs-storage-backend:
+    default: "local"
+    type: string
+    description: |
+      Defines the location to store logs.
+      Valid options are:
+        * local (default): Store logs on local filesystem.
+        * swift: Store logs on swift container.
+  deploy-logs-local-path:
+    default: "/var/log/ironic/deploy"
+    type: string
+    description: |
+      Location of the directory to store logs on local filesystem.
+      Used when deploy-logs-storage-backend is configured to "local".
+  deploy-logs-swift-container:
+    default: "ironic_deploy_logs_container"
+    type: string
+    description: |
+      The name of the swift container to store logs.
+      Used when deploy-logs-storage-backend is configured to "swift".
+  deploy-logs-swift-days-to-expire:
+    default: 30
+    type: int
+    description: |
+      Number of days before a log object expires in swift.

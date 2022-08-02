@@ -273,6 +273,50 @@ class TestIronicCharm(test_utils.PatchHelper):
             target.config.get("default-deploy-interface"),
             "fake_deploy")
 
+    def test_configure_logging_with_local_path(self):
+        cfg_data = {
+            "deploy-logs-collect": "always",
+            "deploy-logs-storage-backend": "local",
+            "deploy-logs-local-path": "/var/log/ironic/nodeploy"}
+
+        hookenv.config.return_value = cfg_data
+        target = ironic.IronicConductorCharm()
+        target._configure_defaults()
+
+        self.assertEqual(
+            target.config.get("deploy-logs-collect"),
+            "always")
+        self.assertEqual(
+            target.config.get("deploy-logs-storage-backend"),
+            "local")
+        self.assertEqual(
+            target.config.get("deploy-logs-local-path"),
+            "/var/log/ironic/nodeploy")
+
+    def test_configure_logging_with_swift_container(self):
+        cfg_data = {
+            "deploy-logs-collect": "always",
+            "deploy-logs-storage-backend": "swift",
+            "deploy-logs-swift-container": "no_container",
+            "deploy-logs-swift-days-to-expire": 15}
+
+        hookenv.config.return_value = cfg_data
+        target = ironic.IronicConductorCharm()
+        target._configure_defaults()
+
+        self.assertEqual(
+            target.config.get("deploy-logs-collect"),
+            "always")
+        self.assertEqual(
+            target.config.get("deploy-logs-storage-backend"),
+            "swift")
+        self.assertEqual(
+            target.config.get("deploy-logs-swift-container"),
+            "no_container"),
+        self.assertEqual(
+            target.config.get("deploy-logs-swift-days-to-expire"),
+            15),
+
     def test_setup_pxe_config(self):
         hookenv.config.return_value = {
             "default-network-interface": "fake_net",
