@@ -1,9 +1,15 @@
 # Several dependencies now require setuptools-scm>=3.0,<=3.4.1 which requires toml
 setuptools-scm>=3.0,<=3.4.1
+# Add in Cython for msgpack and setuptools if they need it; for some reason dependency detection in
+# charm-build is not picking up the dependency, probably because it is optional, but somehow is
+# triggered in LP: #1983388
+Cython==0.29.32
 toml
 keystoneauth1
 pbr
-python-glanceclient
+# python-glanceclient > 4 indirectly requires flit_core<3 but we explictly ask for flit_core>3
+# so pin python-glanceclient<4
+python-glanceclient<4
 python-swiftclient
 python-keystoneclient
 zipp < 2.0.0
