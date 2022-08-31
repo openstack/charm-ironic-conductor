@@ -21,6 +21,7 @@ charm.use_defaults(
 def render(*args):
     hookenv.log("about to call the render_configs with {}".format(args))
     with charm.provide_charm_instance() as ironic_charm:
+        ironic_charm.upgrade_if_available(args)
         ironic_charm.render_with_interfaces(
             charm.optional_interfaces(args))
         ironic_charm.configure_tls()

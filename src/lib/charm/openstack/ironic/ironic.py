@@ -308,6 +308,8 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
         self.config["ironic_user"] = cfg.IRONIC_USER
         self.config["ironic_group"] = cfg.IRONIC_GROUP
         self.restart_map.update(cfg.get_restart_map())
+        self.permission_override_map.update(
+            cfg.get_permission_override_map())
         if cfg.HTTPD_SERVICE_NAME not in self.services:
             self.services.append(
                 cfg.HTTPD_SERVICE_NAME)
