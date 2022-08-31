@@ -58,7 +58,7 @@ class PXEBootBase(object):
 
     def get_permission_override_map(self):
         return {
-            self.GRUB_CFG: 0o660}
+            self.GRUB_CFG: 0o664}
 
     def determine_packages(self):
         default_packages = (
