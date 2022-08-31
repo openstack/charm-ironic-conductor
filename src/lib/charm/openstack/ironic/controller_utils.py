@@ -55,6 +55,10 @@ class PXEBootBase(object):
             self.HTTP_SERVER_CONF: [self.HTTPD_SERVICE_NAME, ],
         }
 
+    def get_permission_override_map(self):
+        return {
+            self.GRUB_CFG: 0o664}
+
     def determine_packages(self):
         default_packages = (
             self.PACKAGES + self.TFTP_PACKAGES + self.HTTPD_PACKAGES)
