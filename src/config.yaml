@@ -178,3 +178,11 @@ options:
     description: |
       Use ipmitool to do the retries by passing relevant parameters. By default the option
       is set to False and in this case Ironic will do the retries by re-running ipmi commands.
+  swift-temp-url-duration:
+    default:
+    type: int
+    description: |
+      The length of time (in seconds) that the temporary URL will be valid
+      for. Defaults to 20 minutes. If some deploys get a 401 response code
+      when trying to download from the temporary URL, try raising this
+      duration.
