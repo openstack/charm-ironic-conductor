@@ -162,8 +162,6 @@ services:
     charm: ch:mysql-innodb-cluster
     num_units: 3
     constraints: mem=4G
-    options:
-      source: *source
     channel: latest/edge
   cinder:
     charm: ch:cinder
