@@ -212,3 +212,11 @@ options:
     type: int
     description: |
       Number of days before a log object expires in swift.
+  swift-temp-url-duration:
+    default:
+    type: int
+    description: |
+      The length of time (in seconds) that the temporary URL will be valid
+      for. Defaults to 20 minutes. If some deploys get a 401 response code
+      when trying to download from the temporary URL, try raising this
+      duration.
