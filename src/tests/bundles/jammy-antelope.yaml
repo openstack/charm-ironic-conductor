@@ -1,7 +1,7 @@
 local_overlay_enabled: False
 
 options:
-  source: &source cloud:jammy-zed
+  source: &source cloud:jammy-antelope
 series: jammy
 relations:
 - - nova-ironic
