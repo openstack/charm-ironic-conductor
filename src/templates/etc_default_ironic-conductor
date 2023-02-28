@@ -1,0 +1,5 @@
+###############################################################################
+# [ WARNING ]
+# Configuration file maintained by Juju. Local changes may be overwritten.
+###############################################################################
+DAEMON_ARGS="--config-dir=/etc/ironic/conf.d/"

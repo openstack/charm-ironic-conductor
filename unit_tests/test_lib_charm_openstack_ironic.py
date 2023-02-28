@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
 from copy import deepcopy
+from unittest import mock
 
+import charms_openstack.test_mocks
 import charms_openstack.test_utils as test_utils
 import charms.leadership as leadership
 import charmhelpers.core.hookenv as hookenv
@@ -522,3 +523,48 @@ class TestIronicCharm(test_utils.PatchHelper):
             ' (bogus) is not enabled in enabled-deploy-interfaces: direct, '
             'iscsi')
         self.assertEqual(target.custom_assess_status_check(), expected_status)
+
+    @mock.patch('charms_openstack.charm.OpenStackCharm.upgrade_charm')
+    def test_upgrade_charm(self, upgrade_charm):
+        os_release.return_value = "ussuri"
+        cfg_data = {
+            "openstack-origin": "distro",
+        }
+        hookenv.config.return_value = cfg_data
+        target = ironic.IronicConductorCharm()
+        target.upgrade_charm()
+        # check the parent's upgrade_charm was called
+        upgrade_charm.assert_called()
+        os_module = charms_openstack.test_mocks.charmhelpers.contrib.openstack
+        templating = os_module.templating
+        templating.OSConfigRenderer.assert_called_with(
+            templates_dir='templates/', openstack_release='ussuri')
+        configs = templating.OSConfigRenderer()
+        configs.register.assert_called_with(config_file=ironic.IRONIC_DEFAULT,
+                                            contexts=[])
+        configs.write_all.assert_called_with()
+
+    @mock.patch('charms_openstack.charm.OpenStackCharm.install')
+    def test_install(self, install):
+        os_release.return_value = "ussuri"
+        cfg_data = {
+            "openstack-origin": "distro",
+        }
+        charmhelpers = charms_openstack.test_mocks.charmhelpers
+        os_utils = charmhelpers.contrib.openstack.utils
+        os_utils.get_source_and_pgp_key.return_value = (None, None)
+
+        hookenv.config.return_value = cfg_data
+
+        target = ironic.IronicConductorCharm()
+        target.install()
+        install.assert_called_with()
+        os_module = charms_openstack.test_mocks.charmhelpers.contrib.openstack
+        templating = os_module.templating
+        templating.OSConfigRenderer.assert_called_with(
+            templates_dir='templates/', openstack_release='ussuri')
+        configs = templating.OSConfigRenderer(templates_dir='templates/',
+                                              openstack_release='ussuri')
+        configs.register.assert_called_with(config_file=ironic.IRONIC_DEFAULT,
+                                            contexts=[])
+        configs.write_all.assert_called_with()
