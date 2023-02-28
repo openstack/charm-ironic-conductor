@@ -292,6 +292,9 @@ services:
       disable-secure-erase: true
       use-ipxe: true
       enabled-network-interfaces: "flat, noop"
+      hardware-enablement-options: |
+        [ipmi]
+        debug = true
   neutron-ironic-agent:
     charm: ch:neutron-api-plugin-ironic
     num_units: 0
