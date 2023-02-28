@@ -11,10 +11,13 @@ from charms_openstack.adapters import (
     OpenStackRelationAdapters,
 )
 from charmhelpers.contrib.openstack.utils import os_release
+from charmhelpers.contrib.openstack import templating
+from charmhelpers.core import host
 
 import charm.openstack.ironic.controller_utils as controller_utils
 import charms_openstack.adapters as adapters
 import charmhelpers.contrib.network.ip as ch_ip
+import charmhelpers.contrib.openstack.utils as ch_utils
 import charms.leadership as leadership
 import charms.reactive as reactive
 
@@ -37,6 +40,10 @@ PACKAGES = [
 
 IRONIC_DIR = "/etc/ironic/"
 IRONIC_CONF = os.path.join(IRONIC_DIR, "ironic.conf")
+IRONIC_CONF_D = os.path.join(IRONIC_DIR, "conf.d")
+IRONIC_CONF_HW_ENABLEMENT = os.path.join(IRONIC_CONF_D,
+                                         "90-hardware-enablement.conf")
+IRONIC_DEFAULT = "/etc/default/ironic-conductor"
 ROOTWRAP_CONF = os.path.join(IRONIC_DIR, "rootwrap.conf")
 FILTERS_DIR = os.path.join(IRONIC_DIR, "rootwrap.d")
 IRONIC_LIB_FILTERS = os.path.join(
@@ -194,6 +201,8 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
 
     restart_map = {
         IRONIC_CONF: ['ironic-conductor', ],
+        IRONIC_DEFAULT: ['ironic-conductor', ],
+        IRONIC_CONF_HW_ENABLEMENT: ['ironic-conductor', ],
         IRONIC_UTILS_FILTERS: ['ironic-conductor', ],
         IRONIC_LIB_FILTERS: ['ironic-conductor', ],
         ROOTWRAP_CONF: ['ironic-conductor', ],
@@ -313,6 +322,7 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
     def install(self):
         self.configure_source()
         super().install()
+        self._reconfigure_ironic_conductor()
         self.pxe_config._copy_resources()
         self.assess_status()
 
@@ -434,3 +444,29 @@ class IronicConductorCharm(charms_openstack.charm.OpenStackCharm):
             return ('blocked', msg)
 
         return (None, None)
+
+    def upgrade_charm(self):
+        """Custom upgrade charm.
+
+        Side effects:
+        - Create /etc/ironic/conf.d/ directory.
+        - Reconfigure ironic-conductor service to use the previously created
+          directory.
+        """
+        self._reconfigure_ironic_conductor()
+        super().upgrade_charm()
+
+    def _reconfigure_ironic_conductor(self):
+        """Reconfigure ironic-conductor daemon.
+
+        Set /etc/default/ironic-conductor to pass --config-dir in DAEMON_ARGS.
+        """
+        if not os.path.isdir(IRONIC_CONF_D):
+            host.mkdir(IRONIC_CONF_D)
+
+        # reconfigure ironic-conductor to run it with --conf-dir
+        release = ch_utils.os_release('ironic-common')
+        configs = templating.OSConfigRenderer(templates_dir='templates/',
+                                              openstack_release=release)
+        configs.register(config_file=IRONIC_DEFAULT, contexts=[])
+        configs.write_all()
