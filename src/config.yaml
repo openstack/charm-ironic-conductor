@@ -176,3 +176,9 @@ options:
       for. Defaults to 20 minutes. If some deploys get a 401 response code
       when trying to download from the temporary URL, try raising this
       duration.
+  hardware-enablement-options:
+    default:
+    type: string
+    description: |
+      Options passed to the managed service to set configuration keys that
+      enable the use of specific hardware.
