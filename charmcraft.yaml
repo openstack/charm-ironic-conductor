@@ -10,9 +10,11 @@ parts:
       - git
       - python3-dev
       - libffi-dev
+      - libpython3-dev
       - libssl-dev
       - rustc
       - cargo
+      - pkg-config
     source: src/
     build-snaps:
       - charm/latest/edge
