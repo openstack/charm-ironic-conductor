@@ -10,6 +10,10 @@ charms_openstack.test_mocks.mock_charmhelpers()
 sys.modules['charmhelpers.core.decorators'] = (
     charms_openstack.test_mocks.charmhelpers.core.decorators)
 
+global snap
+snap = mock.MagicMock()
+sys.modules['charms.layer'] = snap
+
 
 class _fake_decorator(object):
 
