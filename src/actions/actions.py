@@ -56,6 +56,7 @@ def set_temp_url_secret(*args):
     except Exception as e:
         ch_core.hookenv.action_fail('Failed to create keystone session ("{}")'
                                     .format(e))
+        return
 
     os_cli = api_utils.OSClients(keystone_session)
     if os_cli.has_swift() is False:

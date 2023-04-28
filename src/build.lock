@@ -164,7 +164,7 @@
       "type": "python_module",
       "package": "importlib_metadata",
       "vcs": null,
-      "version": "2.1.3"
+      "version": "4.3.0"
     },
     {
       "type": "python_module",
@@ -260,7 +260,7 @@
       "type": "python_module",
       "package": "setuptools",
       "vcs": null,
-      "version": "62.1.0"
+      "version": "60.8.2"
     },
     {
       "type": "python_module",
