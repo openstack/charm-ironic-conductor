@@ -347,7 +347,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "stable/xena",
-      "version": "63229d2ba725e773d9a0dfc97f10643b89a7f7ac",
+      "version": "5f8dacee1a7583d3927d39887bd5460ff2e2f812",
       "vcs": "git"
     },
     {
