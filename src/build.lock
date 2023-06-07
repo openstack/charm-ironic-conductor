@@ -347,7 +347,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "stable/ussuri",
-      "version": "a99a667d343ab3c11074d8bc8c6d8b5d638f73b7",
+      "version": "87f9a8df625ce6cd0c2a04da2d718ab7f9c1aad3",
       "vcs": "git"
     },
     {
