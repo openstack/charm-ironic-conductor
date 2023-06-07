@@ -33,4 +33,6 @@ signing_dir = {{ identity_credentials.signing_dir }}
 {% if options.use_memcache == true -%}
 memcached_servers = {{ options.memcache_url }}
 {% endif -%}
+service_token_roles = {{ identity_credentials.admin_role }}
+service_token_roles_required = True
 {% endif -%}
