@@ -347,7 +347,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "stable/wallaby",
-      "version": "77f25c49dfd08ac16c7a1cc018b008aa704bd313",
+      "version": "0330c6814eb84ee8531445ec2a41e8f26004e442",
       "vcs": "git"
     },
     {
