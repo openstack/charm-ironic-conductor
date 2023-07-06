@@ -417,7 +417,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "stable/zed",
-      "version": "ab5dfd7973375500da59122b14fabab376a705c6",
+      "version": "69758d011674edd56215c18db5f90d62574b013b",
       "vcs": "git"
     },
     {
