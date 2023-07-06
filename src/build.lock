@@ -237,7 +237,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "refs/heads/stable/yoga",
-      "version": "32772ff502e179027f46daaa04729a2f5d49f5e5",
+      "version": "4ca4691acdc17cfd99082afb6d07b924ddd455bd",
       "vcs": "git"
     },
     {
