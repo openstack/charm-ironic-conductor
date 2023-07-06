@@ -321,7 +321,7 @@
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
       "branch": "stable/antelope",
-      "version": "837a8b58737d19e114ac7ac66f917101b2c01b04",
+      "version": "fa53eb94918fbfe170df60a0888610fc2e29cc2c",
       "vcs": "git"
     },
     {
