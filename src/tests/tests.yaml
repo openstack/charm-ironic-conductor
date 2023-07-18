@@ -4,14 +4,15 @@
 charm_name: ironic-api
 
 gate_bundles:
-- jammy-zed
+- jammy-antelope
 
 dev_bundles:
-- jammy-antelope
+- jammy-bobcat
 - lunar-antelope
+- mantic-bobcat
 
 smoke_bundles:
-  - jammy-zed
+  - jammy-antelope
 
 target_deploy_status:
   vault:
@@ -39,3 +40,4 @@ tests:
 tests_options:
   force_deploy:
     - lunar-antelope
+    - mantic-bobcat

@@ -14,8 +14,8 @@ tags:
 - baremetal
 series:
 - jammy
-- kinetic
 - lunar
+- mantic
 extra-bindings:
   deployment:
   cleaning:
