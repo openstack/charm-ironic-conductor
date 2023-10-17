@@ -14,7 +14,6 @@ tags:
 - baremetal
 series:
 - jammy
-- lunar
 - mantic
 extra-bindings:
   deployment:
