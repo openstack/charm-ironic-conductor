@@ -22,6 +22,7 @@ pxe_bootfile_name=undionly.kpxe
 
 # Bootfile DHCP parameter for UEFI boot mode. (string value)
 uefi_pxe_bootfile_name=ipxe.efi
+uefi_ipxe_bootfile_name=ipxe.efi
 
 # Template file for PXE configuration. (string value)
 pxe_config_template=$pybasedir/drivers/modules/ipxe_config.template
