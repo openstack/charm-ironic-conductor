@@ -12,8 +12,8 @@ parts:
       - libffi-dev
       - libpython3-dev
       - libssl-dev
-      - rustc
-      - cargo
+      - rustc-1.85
+      - cargo-1.85
       - pkg-config
     source: src/
     build-snaps:
@@ -21,6 +21,11 @@ parts:
     build-environment:
       - CHARM_INTERFACES_DIR: $CRAFT_PROJECT_DIR/interfaces/
       - CHARM_LAYERS_DIR: $CRAFT_PROJECT_DIR/layers/
+    override-build: |
+      # NOTE(freyes): Force build to use rustc-1.85
+      ln -s /usr/bin/rustc-1.76 /usr/bin/rustc
+      ln -s /usr/bin/cargo-1.76 /usr/bin/cargo
+      craftctl default
 
 base: ubuntu@24.04
 platforms:
