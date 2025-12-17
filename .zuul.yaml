@@ -2,3 +2,10 @@
     templates:
       - openstack-python3-charm-jobs
       - openstack-cover-jobs
+    check:
+      jobs:
+        - charmbuild
+    vars:
+      charm_build_name: ironic-conductor
+      charmcraft_channel: 2.x/stable
+
