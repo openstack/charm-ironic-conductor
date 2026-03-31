@@ -7,5 +7,5 @@
       - charmbuild
     vars:
       charm_build_name: ironic-conductor
-      charmcraft_channel: 2.x/stable
+      charmcraft_channel: 3.x/stable
 
